@@ -1,0 +1,44 @@
+.page-item.disabled .page-link {
+    font-weight: 800;
+}
+.sortable_table th, .sortable_table td{
+    min-width: 140px;
+}
+@media screen and (min-width: 768px) {
+    /* Desktop */
+    .desktop_row{
+        display: flex;
+    }
+    .mobile_row{
+        display: none;
+    }
+    .desktop-header{
+        display: inline-block !important;
+    }
+    .mobile-header{
+        display: none !important;
+    }
+    .logout:active {
+        color: #212121;
+        background-color: #fff;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    /* Mobile */
+    .desktop_row{
+        display: none;
+    }
+    .mobile_row{
+        display: flex;
+    }
+    .desktop-header{
+        display: none !important;
+    }
+    .mobile-header{
+        display: inline-block !important;
+    }
+    .timesheet_table td {
+        min-width: 140px;
+    }
+}
