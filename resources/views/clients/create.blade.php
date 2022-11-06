@@ -13,8 +13,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-8 offset-lg-2">	
-	<div class="card">			
+		<div class="col-lg-8 offset-lg-2">
+	<div class="card">
 			@if($errors->any())
 				<br/>
 			    <div class="alert alert-danger">
@@ -77,18 +77,18 @@
 					<input type="text" class="form-control" name="email" aria-describedby="email" placeholder="Email" value="{{ old('email', (isset($row)) ? $row->email : '') }}"/>
 				</div>
 				<div class="col-lg-4">
-					<label for="status">Status</label>	
-					<div class="">					
-						<button type="button" onClick="setStatus(this, 'status', 0);"  class="btn @if(isset($row) && $row->status == 0) red-btn btn-selected @else red-invert-btn @endif"><i class="fas fa-times"></i></button>						
-						<button type="button" onClick="setStatus(this, 'status', 1);"  class="btn @if(isset($row) && $row->status == 1) green-btn btn-selected @else green-invert-btn @endif"><i class="fas fa-check"></i></button>						
-						<input type="hidden" id="status" name="status" value="@if(isset($row)) {{ $row->status }} @else 0 @endif"/>						
+					<label for="status">Status</label>
+					<div class="">
+						<button type="button" onClick="setStatus(this, 'status', 0);"  class="btn @if(isset($row) && $row->status == 0) red-btn btn-selected @else red-invert-btn @endif"><i class="fas fa-times"></i></button>
+						<button type="button" onClick="setStatus(this, 'status', 1);"  class="btn @if(isset($row) && $row->status == 1) green-btn btn-selected @else green-invert-btn @endif"><i class="fas fa-check"></i></button>
+						<input type="hidden" id="status" name="status" value="@if(isset($row)) {{ $row->status }} @else 0 @endif"/>
 					</div>
 				</div>
 			</div>
-			
+
 			<div class="form-group row">
 				<div class="col-lg-12 text-right">
-					<button type="submit" class="btn btnbg btn-success">Save</button>					
+					<button type="submit" class="btn btnbg btn-success">Save</button>
 				</div>
 			</div>
 			</form>
@@ -120,10 +120,10 @@
 }
 .green-btn{
     background-color:#469408;
-    color:#f6f6f6;  
+    color:#f6f6f6;
 	border-radius: 0;
 	font-size: 24px;
-	padding: 8px 20px;  
+	padding: 8px 20px;
 }
 </style>
 <script type="text/javascript">

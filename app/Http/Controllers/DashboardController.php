@@ -8,21 +8,30 @@ use Auth;
 use Validator;
 
 use App\Repository\Contract\UserInterface as UserInterface;
+use App\Repository\Contract\ClientInterface as ClientInterface;
+use App\Position;
+use App\Employee;
+use App\Job;
 
 class DashboardController extends Controller
 {
     private $request;
     private $user;
+    private $client;
 
-    public function __construct(Request $request, UserInterface $user)
+    public function __construct(Request $request, UserInterface $user, ClientInterface $client)
     {
         $this->request = $request;
         $this->user = $user;
+        $this->client = $client;
     }
 
     public function index()
     {
-        return view('dashboard.index');
+        $data['clients']            = $this->client->dropdown();
+        $data['positions']          = Position::all();
+        $data['employees']          = Employee::all();
+        return view('dashboard.index', $data);
     }
 
     public function change_password()
@@ -54,11 +63,11 @@ class DashboardController extends Controller
         $user_id = Auth::user()->id;
 
         $new_user = $this->user->show($user_id);
-        
+
         $pass = $this->request->input('password');
 
-        if(!empty($pass)){            
-            $user_row = array();           
+        if(!empty($pass)){
+            $user_row = array();
             $user_row['password'] = Hash::make($pass);
             $this->user->update($user_row, $new_user->id);
         }

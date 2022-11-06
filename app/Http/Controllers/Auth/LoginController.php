@@ -41,7 +41,7 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-    
+
     public function username(){
         return 'username';
     }
@@ -64,14 +64,14 @@ class LoginController extends Controller
     public function socialLogin($social){
         return Socialite::driver($social)->redirect();
     }
-  
+
     public function handleProviderCallback($social){
         try{
             $userSocial = Socialite::driver($social)->user();
         }catch(\Exception $e){
             return redirect()->back()->withErrors(['username', $e->getMessage()]);
         }
-        
+
         Log::debug('Social callback');
         Log::debug($userSocial->getEmail());
 
