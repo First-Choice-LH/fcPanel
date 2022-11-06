@@ -18,7 +18,7 @@ use App\Mail\PanelEmail;
 
 function sendEmail($user_id, $type){
     $user = User::find($user_id);
-    
+
     if($user && $user->email != ''){
 
         if($type == USER_VERIFY){
@@ -37,7 +37,7 @@ function sendEmail($user_id, $type){
             );
             Mail::to($message['to'])->send(new PanelEmail($message));
         }
-        
+
     }
 }
 
@@ -202,7 +202,7 @@ function getActivity($row){
       $data['name'] = 'You have';
       $data['url'] = "/employees/myaccount";
     }
-    
+
   }
 
   if($type == SUP_PROFILE){
@@ -263,7 +263,7 @@ function getActivity($row){
     else{
       $data['name'] = 'Admin has';
     }
-    
+
   }
 
   if($type == EMP_TIME_APR){
@@ -282,7 +282,7 @@ function getActivity($row){
     }
 
     elseif(isset($supervisor)){
-      
+
       $data['name'] = "You have";
       $jobsite = Jobsite::where('id',$row->jobsite_id)->first();
       $data['address'] = $jobsite->title.', '.$jobsite->address.' '.$jobsite->suburb.' '.$jobsite->state.' '.$jobsite->country.' '.$jobsite->postcode;
@@ -291,7 +291,7 @@ function getActivity($row){
       $date = $date1[count($date1)-2];
       $data['url'] = "/employee/jobsites/timesheet/".$clientid."/".$row->jobsite_id."/".$row->employee_id."?date=".$date;
     }
-    
+
   }
 
   return $data;
@@ -312,4 +312,8 @@ function getName($row){
     $user = User::where('id',$row->user_id)->first();
     return $user->name." ";
   }
+}
+
+function getUserFriendlyDateTime($date, $format = 'm/d/Y h:i A') {
+    return date($format, strtotime($date));
 }

@@ -24,19 +24,19 @@ class ClientController extends Controller
     private $jobsite;
     private $timesheet;
 
-    public function __construct(Request $request, ClientInterface $client, 
-        UserInterface $user, JobsiteInterface $jobsite, 
+    public function __construct(Request $request, ClientInterface $client,
+        UserInterface $user, JobsiteInterface $jobsite,
         EmployeeInterface $employee, TimesheetInterface $timesheet)
     {
         $this->middleware('auth');
-         
-        $this->request = $request; 
-    	$this->user = $user;     
+
+        $this->request = $request;
+    	$this->user = $user;
         $this->client = $client;
         $this->employee = $employee;
         $this->jobsite = $jobsite;
-        $this->timesheet = $timesheet;   
-        
+        $this->timesheet = $timesheet;
+
     }
 
     public function index(Request $request)
@@ -59,12 +59,12 @@ class ClientController extends Controller
     {
         $data = [];
         $data['row'] = $this->client->show($id);
-        
+
         return view('clients.create', $data);
     }
 
     public function save(ClientRequest $request)
-    {        
+    {
         $id = $request->input('id');
 
         $fields = [
@@ -81,7 +81,7 @@ class ClientController extends Controller
         ];
 
         $client_row = $request->only($fields);
-        
+
         $client_row['user_id'] = 0;//$new_user->id;
 
         if($id == null){
@@ -100,23 +100,23 @@ class ClientController extends Controller
 
         $data = [];
         $data['client_id'] = $client_id;
-        
+
         $data['rows'] = $this->client->paginateByClient($client_id);
-        
+
         return view('clients.jobsites', $data);
     }
 
     public function employees($jobsite_id=0)
-    {   
+    {
         $client = $this->client->getClientId(Auth::id());
         $client_id = $client->id;
 
         $data = [];
         $data['client_id'] = $client_id;
         $data['jobsite_id'] = $jobsite_id;
-        
+
         $data['rows'] = $this->client->paginateByJobsite($client_id, $jobsite_id);
-        
+
         return view('clients.employees', $data);
     }
 
@@ -132,11 +132,11 @@ class ClientController extends Controller
         $data['employee_id'] = $employee_id;
 
         $date = $this->request->get('date');
-        
+
         if(!empty($date)){
             $dayStart = new \DateTime($date);
-            
-            if($dayStart->format("D") != "Mon"){               
+
+            if($dayStart->format("D") != "Mon"){
                 $dayStart->modify("previous monday");
             }
         }else{
@@ -156,11 +156,11 @@ class ClientController extends Controller
         $data['employee'] = $this->employee->show($employee_id);
         $data['week'] = [];
         $day = 0;
-        
+
         while($day < 7){
             $tempDay = new \DateTime($dayStart->format("Y-m-d"));
             $tempDay->modify("+".$day." day");
-            
+
             $data['week'][] = $tempDay;
             $data['rows'][] = $this->timesheet->getByDate($employee_id, $jobsite_id, $tempDay);
             $day++;
@@ -182,7 +182,7 @@ class ClientController extends Controller
             }
 
             for($j=0;$j<60;$j+=15){
-                
+
                 $temp_min =  str_pad($j, 2, '0', STR_PAD_LEFT);
 
                 if($i != $end_hour && $j <= 30)
@@ -193,7 +193,7 @@ class ClientController extends Controller
                     }else{
                         $temp_suffix = 'PM';
                     }
-                    
+
                     $time[]['key'] = $temp_hour.':'.$temp_min.' '.$temp_suffix;
                     $time[count($time)-1]['value'] = str_pad($i, 2, '0', STR_PAD_LEFT).':'.$temp_min.':00';
                 }
@@ -212,14 +212,14 @@ class ClientController extends Controller
 
         $employee_id = $this->request->input('employee_id');
         $jobsite_id = $this->request->input('jobsite_id');
-        
+
         $ids = $this->request->input('id');
         $dates = $this->request->input('date');
         $starts = $this->request->input('start');
         $ends = $this->request->input('end');
         $break = $this->request->input('break');
         $status = $this->request->input('status');
-        
+
         for($i=0; $i< sizeof($ids); $i++)
         {
             // if date is empty don't proceed
@@ -238,7 +238,7 @@ class ClientController extends Controller
             $row['end'] = $end->format("Y-m-d H:i:s");
             $row['break'] = (bool) $break[$i];
             $row['status'] = $status[$i];
-            
+
             if($id == null)
             {
                 $this->timesheet->create($row);
@@ -246,7 +246,7 @@ class ClientController extends Controller
                 $this->timesheet->update($row,$id);
             }
         }
-        
+
         return redirect('/clients/jobsites/employees/'.$jobsite_id);
 
     }

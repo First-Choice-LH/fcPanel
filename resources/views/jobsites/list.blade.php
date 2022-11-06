@@ -36,7 +36,7 @@
                                   <td class="d-none d-md-table-cell">{{ $i++ }}</td>
                                <td class="d-none d-md-table-cell">{{ $row->company_name }}</td>
                                   <td class="">{{ $row->address }}</td>
-                                  
+
                                <td class="">
                                    <?php if($row->status==0){
                                            echo "&#10006;";
@@ -45,13 +45,16 @@
                                            echo "Active";
                                    }?>
                                </td>
-                                  <td class="text-center"><a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}">EDIT</a></td>
+                                <td class="text-center">
+                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}" title="View"><i class="fa fa-search"></i></a>
+                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
+                                </td>
                               </tr>
                               @endforeach
                           </tbody>
                       </table>
                       {{ $rows->appends(request()->except('page'))->links() }}
-				  
+
 				</div>
 			</div>
 		</div>
@@ -61,6 +64,6 @@
 
 @section('script')
 <script type="text/javascript">
-    
+
 </script>
 @endsection

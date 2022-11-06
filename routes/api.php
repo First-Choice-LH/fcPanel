@@ -13,8 +13,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::get('/client', 'ApiController@getClientDetail');
+Route::get('/jobs', 'ApiController@getJobs');
+Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
+Route::get('/employees', 'ApiController@getEmployees');
 
 Route::get("/encrypt/project","ApiController@encryptProject");

@@ -43,6 +43,13 @@ class UserTableSeeder extends Seeder
         $user->save();
         $user->assignRole('admin');
 
+        $user = new User();
+        $user->name = 'Super Admin';
+        $user->username = 'superadmin';
+        $user->password = bcrypt('superadmin');
+        $user->save();
+        $user->assignRole('superadmin');
+
         $user2 = new User();
         $user2->name = 'Client';
         $user2->username = 'client';
