@@ -13,8 +13,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-8 offset-lg-2">			
-			
+		<div class="col-lg-8 offset-lg-2">
+
 			@if($errors->any())
 				<br/>
 			    <div class="alert alert-danger">
@@ -29,7 +29,7 @@
 			<form role="form" method="post" action="{{ route('supervisors.save') }}" class="card-body">
 				{{ csrf_field() }}
 				<input type="hidden" name="id" value="{{ old('id', (isset($row)) ? $row->id : null) }}"/>
-		
+
 			<div class="card padall30 mrb30">
 				<h4>General Details<hr class="hralignleft"/></h4>
 
@@ -56,7 +56,7 @@
 				</div>
 			</div>
 
-			<div class="card padall30 mrb30">
+			{{-- <div class="card padall30 mrb30">
 				@if(!isset($row))
 				<h4>Login Details<hr class="hralignleft"/></h4>
 				<div class="form-group row">
@@ -78,11 +78,11 @@
 						<input type="password" class="form-control" name="repassword" aria-describedby="repassword" placeholder="Retype Password" value=""/>
 					</div>
 				</div>
-			</div>
-			
+			</div> --}}
+
 			<div class="card padall30 mrb30">
 				<h4>Location<hr class="hralignleft"/></h4>
-				<div class="form-group row">				
+				<div class="form-group row">
 					<div class="col-lg-6">
 						<label for="client_id">Company</label>
 
@@ -95,19 +95,19 @@
 							@endforeach
 						</select>
 					</div>
-					<!--div class="col-lg-6">							
+					<!--div class="col-lg-6">
 						<input type="hidden" name="jobsite_id" value="0"/>
-					</div-->	
+					</div-->
 					<div class="col-lg-6">
 						<label for="status">Status</label>
-								
-						<div class="">				
-							<button type="button" onClick="setStatus(this, 'status', 0);"  class="btn @if(isset($row) && $row->status == 0) red-btn btn-selected @else red-invert-btn @endif"><i class="fas fa-times"></i></button>						
-							<button type="button" onClick="setStatus(this, 'status', 1);"  class="btn @if(isset($row) && $row->status == 1) green-btn btn-selected @else green-invert-btn @endif"><i class="fas fa-check"></i></button>						
-							<input type="hidden" id="status" name="status" value="@if(isset($row)) {{ $row->status }} @else 0 @endif"/>													
+
+						<div class="">
+							<button type="button" onClick="setStatus(this, 'status', 0);"  class="btn @if(isset($row) && $row->status == 0) red-btn btn-selected @else red-invert-btn @endif"><i class="fas fa-times"></i></button>
+							<button type="button" onClick="setStatus(this, 'status', 1);"  class="btn @if(isset($row) && $row->status == 1) green-btn btn-selected @else green-invert-btn @endif"><i class="fas fa-check"></i></button>
+							<input type="hidden" id="status" name="status" value="@if(isset($row)) {{ $row->status }} @else 0 @endif"/>
 						</div>
 					</div>
-				</div>	
+				</div>
 
 				<div class="form-group row">
 					<div class="col-lg-12 text-right">
@@ -143,10 +143,10 @@
 }
 .green-btn{
     background-color:#469408;
-    color:#f6f6f6;  
+    color:#f6f6f6;
 	border-radius: 0;
 	font-size: 24px;
-	padding: 8px 20px;  
+	padding: 8px 20px;
 }
 </style>
 <script type="text/javascript">
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $("select[name=client_id]").on('change', function(){
         var client_id = $("select[name=client_id]").val();
         var ajax_get_jobsites_url = "{{ url('/api/client_jobsites/') }}/"+client_id;
-        
+
         $.get(ajax_get_jobsites_url, function(response){
             var jsondata = $.parseJSON(response);
             var html = '<option value="">Select Jobsite</option>';

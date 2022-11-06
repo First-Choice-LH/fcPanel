@@ -44,11 +44,11 @@ class SupervisorController extends Controller
     private $position;
     private $request;
 
-    public function __construct(Request $request, EmployeeInterface $employee, SupervisorInterface $supervisor, ClientInterface $client, 
+    public function __construct(Request $request, EmployeeInterface $employee, SupervisorInterface $supervisor, ClientInterface $client,
         JobsiteInterface $jobsite, TimesheetInterface $timesheet, PositionInterface $position, UserInterface $user, ImageInterface $image)
     {
         $this->request = $request;
-        $this->user = $user;     
+        $this->user = $user;
         $this->supervisor = $supervisor;
         $this->employee = $employee;
         $this->client = $client;
@@ -67,7 +67,7 @@ class SupervisorController extends Controller
         $jobsites_ids = $jobsites->pluck('id')->toArray();
         $employee_ids =  EmployeeJobsite::whereIn('jobsite_id',$jobsites_ids)->pluck('employee_id')->toArray();
         $activity['rows'] = Activity::where('user_id',$supervisor_tms->user_id)->orWhereIn('jobsite_id',$jobsites_ids)->orWhere('supervisor_id',$supervisor_id)->orderBy('id','desc')->paginate(15);
-        
+
         return view('supervisors.activity',$activity);
     }
 
@@ -107,7 +107,7 @@ class SupervisorController extends Controller
 
         $data = [];
         $data['clients'] = $this->client->dropdown();
-        $data['row'] = $this->supervisor->show($id);       
+        $data['row'] = $this->supervisor->show($id);
         return view('supervisors.create', $data);
     }
 
@@ -119,33 +119,33 @@ class SupervisorController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|unique:users',
-                'username' => 'required|string|max:20|unique:users',
+                // 'username' => 'required|string|max:20|unique:users',
             ]);
-         
+
             if ($validator->fails()) {
                return redirect()->back()->withErrors($validator)->withInput();
             }
 
             $user_row = [];
             $user_row['name'] = $request->input('first_name');
-            $user_row['password'] = Hash::make($request->input('password'));
-            $user_row['username'] = $request->input('username');      
-            $user_row['email'] = $request->input('email');      
+            // $user_row['password'] = Hash::make($request->input('password'));
+            // $user_row['username'] = $request->input('username');
+            $user_row['email'] = $request->input('email');
             $new_user = $this->user->createWithRole($user_row, 'supervisor');
             $user_id = $new_user->id;
         }
         else{
 
-            $pass = $request->input('password');
-            $new_user = $this->supervisor->show($id); 
-            if(!empty($pass)){            
-                $user_row = array();           
-                $user_row['password'] = Hash::make($pass);
-                $this->user->update($user_row, $new_user->user_id);
-            }
+            // $pass = $request->input('password');
+            $new_user = $this->supervisor->show($id);
+            // if(!empty($pass)){
+            //     $user_row = array();
+            //     $user_row['password'] = Hash::make($pass);
+            //     $this->user->update($user_row, $new_user->user_id);
+            // }
             $email = $request->input('email');
-            if(!empty($email)){            
-                $user_row = array();           
+            if(!empty($email)){
+                $user_row = array();
                 $user_row['email'] = $email;
                 $this->user->update($user_row, $new_user->user_id);
             }
@@ -158,7 +158,7 @@ class SupervisorController extends Controller
             'email',
             'client_id',
             'status'
-        ];        
+        ];
         $supervisor_row = $request->only($fields);
         $supervisor_row['user_id'] = $new_user->id;
 
@@ -200,7 +200,7 @@ class SupervisorController extends Controller
 
     public function jobsites(Request $request){
 
-        $supervisor = $this->supervisor->getSupervisorId(Auth::id());        
+        $supervisor = $this->supervisor->getSupervisorId(Auth::id());
         $supervisor_id = $supervisor->id;
         $data = [];
         $final = [];
@@ -349,7 +349,7 @@ class SupervisorController extends Controller
        //return view('supervisors.timesheet', $data);
    }
 
-    
+
     public function timesheet_save()
    {
        $export_pdf = $this->request->input('export_pdf');
@@ -471,7 +471,7 @@ class SupervisorController extends Controller
         //$data['jobsites'] = $this->supervisor->dropdownJobsite($id);
         $client_id = Supervisor::where('id',$id)->value('client_id');
         $data['jobsites'] = $this->jobsite->byClientId($client_id);
-        
+
         return view('supervisors.assign', $data);
     }
 
@@ -480,7 +480,7 @@ class SupervisorController extends Controller
         $supervisor_id = $request->input('supervisor_id');
         $client_id = $request->input('client_id');
         $jobsite_id = $request->input('jobsite_id');
-        
+
         $this->supervisor->attach($supervisor_id, $jobsite_id);
         $title = Jobsite::where('id',$jobsite_id)->value('title');
         $userid = Supervisor::where('id',$supervisor_id)->value('user_id');
@@ -493,12 +493,12 @@ class SupervisorController extends Controller
 
     public function unassign($supervisor_id, $jobsite_id)
     {
-        $this->supervisor->detach($supervisor_id, $jobsite_id);    
-        $title = Jobsite::where('id',$jobsite_id)->value('title');    
+        $this->supervisor->detach($supervisor_id, $jobsite_id);
+        $title = Jobsite::where('id',$jobsite_id)->value('title');
         $userid = Supervisor::where('id',$supervisor_id)->value('user_id');
         $message = " have been detached to a jobsite for ".$title;
         $type = SUP_REQ_JOB;
-        activity($userid,$message,$type,NULL,$supervisor_id,$jobsite_id,NULL);   
+        activity($userid,$message,$type,NULL,$supervisor_id,$jobsite_id,NULL);
         return redirect('/supervisors/jobsite/'.$supervisor_id);
     }
 
@@ -510,7 +510,7 @@ class SupervisorController extends Controller
 
         return view('supervisors.thankyou', $data);
     }
-     
+
    public function employee(Request $request){
 
        $id =Auth::id();
@@ -540,7 +540,7 @@ class SupervisorController extends Controller
 
        return view('supervisors.employee', $employee);
   }
-     
+
     public function employeeTimesheet(Request $request){
         $search = isset($request['employee']) ? $request['employee'] : '';
 
@@ -577,8 +577,8 @@ class SupervisorController extends Controller
                         ->whereIn('employees.id',$employee_ids)
                         ->paginate(15);
         }
-      
-       
+
+
        return view('supervisors.timesheets', array('final'=>$employee));
     }
 
@@ -595,7 +595,7 @@ class SupervisorController extends Controller
         }
 
        //$timesheet = $this->timesheet->sortable($request)->getByEmployee($emp_id)->paginate();
-     
+
        return view('timesheets.emptimesheet',array('final'=>$timesheet));
    }
 
@@ -767,7 +767,7 @@ class SupervisorController extends Controller
         if($request->delete == 1){
 
             $approve = Timesheet::where('id',$request->id)->first();
-            
+
             $activity = new Activity;
             $activity->user_id = $approve->employee_id;
             $activity->message = "supervisor has removed timesheet request";

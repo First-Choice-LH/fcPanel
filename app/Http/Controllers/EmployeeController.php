@@ -44,11 +44,11 @@ class EmployeeController extends Controller
     private $image;
     private $request;
 
-    public function __construct(Request $request, EmployeeInterface $employee, PositionInterface $position, ClientInterface $client, 
+    public function __construct(Request $request, EmployeeInterface $employee, PositionInterface $position, ClientInterface $client,
         JobsiteInterface $jobsite, TimesheetInterface $timesheet, UserInterface $user, ImageInterface $image)
     {
         $this->request = $request;
-    	$this->user = $user;     
+    	$this->user = $user;
         $this->employee = $employee;
         $this->client = $client;
         $this->jobsite = $jobsite;
@@ -71,7 +71,7 @@ class EmployeeController extends Controller
     }
 
     public function index(Request $request){
-        
+
         $search = isset($request['employee']) ? $request['employee'] : '';
         if($search != ''){
            $employee = Employee::where('first_name', 'like', '%'.$search.'%')->orWhere('last_name', 'like', '%'.$search.'%')->pluck('id')->toArray();
@@ -85,7 +85,7 @@ class EmployeeController extends Controller
             }
             else{
                 $data['rows'] = Employee::whereIn('id',$employee)->paginate(15);
-                
+
             }
             return view('employees.list',$data);
         }
@@ -112,27 +112,27 @@ class EmployeeController extends Controller
         $data['row'] = $this->employee->show($id);
         $data['licence'] = EmployeeLicence::where('emp_id',$data['row']->id)->get();
         $data['positions'] = $this->position->dropdown();
-      
+
         $emp_id = $this->employee->show($id)->user_id;
         $data['user'] = User::where('id',$emp_id)->first();
-        
+
         return view('employees.create', $data);
     }
 
     public function save(EmployeeRequest $request)
-    {        
+    {
         $id = $request->input('id');
         $jobsite_id = $request->input('jobsite_id');
 
         if($id == null)
-        {            
+        {
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'phone' => 'required',
                 'email' => 'required|unique:users',
-                'username' => 'required|string|max:20|unique:users',
-                'password' => 'required|string|min:6|confirmed',
+                // 'username' => 'required|string|max:20|unique:users',
+                // 'password' => 'required|string|min:6|confirmed',
             ]);
             if ($validator->fails()) {
                return redirect()->back()->withErrors($validator)->withInput();
@@ -141,8 +141,8 @@ class EmployeeController extends Controller
             $user_row = [];
             $user_row['name'] = $request->input('first_name');
             $user_row['email'] = $request->input('email');
-            $user_row['password'] = Hash::make($request->input('password'));
-            $user_row['username'] = $request->input('username');            
+            // $user_row['password'] = Hash::make($request->input('password'));
+            $user_row['username'] = $request->input('username');
             $new_user = $this->user->createWithRole($user_row, 'employee');
 
             $user_id = $new_user->id;
@@ -159,39 +159,39 @@ class EmployeeController extends Controller
                return redirect()->back()->withErrors($validator)->withInput();
             }
             $new_user = $this->employee->show($id);
-            $user_obj = User::where('id',$new_user->user_id)->first();
-            $old_username = $user_obj->username;
-            $username = $request->input('username');
-            if(!empty($username)){
-                if($old_username != $username){
-                    $validator = Validator::make($request->all(), [
-                        'username' => 'required|string|max:20|unique:users'
-                    ]);
-                    if ($validator->fails()) {
-                       return redirect()->back()->withErrors($validator)->withInput();
-                    }
-                    $user_row = array();           
-                    $user_row['username'] = $username;
-                    $this->user->update($user_row, $new_user->user_id);
-                }         
-            }
-            $pass = $request->input('password');
-            if(!empty($pass)){  
+            // $user_obj = User::where('id',$new_user->user_id)->first();
+            // $old_username = $user_obj->username;
+            // $username = $request->input('username');
+            // if(!empty($username)){
+            //     if($old_username != $username){
+            //         $validator = Validator::make($request->all(), [
+            //             'username' => 'required|string|max:20|unique:users'
+            //         ]);
+            //         if ($validator->fails()) {
+            //            return redirect()->back()->withErrors($validator)->withInput();
+            //         }
+            //         $user_row = array();
+            //         $user_row['username'] = $username;
+            //         $this->user->update($user_row, $new_user->user_id);
+            //     }
+            // }
+            // $pass = $request->input('password');
+            // if(!empty($pass)){
 
-                $validator = Validator::make($request->all(), [
-                    'password' => 'required|string|min:6|confirmed',
-                ]);
-                if ($validator->fails()) {
-                   return redirect()->back()->withErrors($validator)->withInput();
-                }
+            //     $validator = Validator::make($request->all(), [
+            //         'password' => 'required|string|min:6|confirmed',
+            //     ]);
+            //     if ($validator->fails()) {
+            //        return redirect()->back()->withErrors($validator)->withInput();
+            //     }
 
-                $user_row = array();           
-                $user_row['password'] = Hash::make($pass);
-                $this->user->update($user_row, $new_user->user_id);
-            }
+            //     $user_row = array();
+            //     $user_row['password'] = Hash::make($pass);
+            //     $this->user->update($user_row, $new_user->user_id);
+            // }
             $email = $request->input('email');
-            if(!empty($email)){            
-                $user_row = array();           
+            if(!empty($email)){
+                $user_row = array();
                 $user_row['email'] = $email;
                 $this->user->update($user_row, $new_user->user_id);
             }
@@ -223,10 +223,10 @@ class EmployeeController extends Controller
         ];
         $public = '';
         $insurance = $request->input('insurance');
-        if(count($insurance) > 0){
-            $public = implode(",",$insurance); 
+        if($insurance && count($insurance) > 0){
+            $public = implode(",",$insurance);
         }
-        
+
 
         $employee_row = $request->only($fields);
         $employee_row['user_id'] = $new_user->id;
@@ -271,7 +271,7 @@ class EmployeeController extends Controller
                 }
             }
 
-            $file = $request['license_image_front'][$key];
+            $file = is_array($request['license_image_front']) ? $request['license_image_front'][$key] : null;
             if($file != null ){
                 $name = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('/dore/employee'), $name);
@@ -280,13 +280,13 @@ class EmployeeController extends Controller
                     if (file_exists(public_path('/dore/employee/'.$lic->license_image_front))){
                         unlink(public_path('/dore/employee/'.$lic->license_image_front));
                     }
-                    
+
                 }
             }else{
                 $name = isset($lic->license_image_front) ? $lic->license_image_front : '';
             }
 
-            $file1 = $request['license_image_back'][$key];
+            $file1 = is_array($request['license_image_back']) ? $request['license_image_back'][$key] : null;
             if($file1 != null ){
                 $name1 = strtotime(Carbon::now()).'.'.$file1->getClientOriginalExtension();
                 $file1->move(public_path('/dore/employee'), $name1);
@@ -300,7 +300,7 @@ class EmployeeController extends Controller
                 $name1 = isset($lic->license_image_back) ? $lic->license_image_back : '';
             }
 
-            
+
             $lic->emp_id = $emp_id;
             $lic->license_type = $request['license_type'][$key];
             $lic->other_type = $request['type_other'][$key];
@@ -353,7 +353,7 @@ class EmployeeController extends Controller
                 'username' => 'required|string|max:20|unique:users',
                 'password' => 'required|string|min:6|confirmed',
             ]);
-         
+
             if ($validator->fails()) {
                return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -398,8 +398,8 @@ class EmployeeController extends Controller
                $this->user->update($user_row, $new_user->user_id);
             }
             $email = $request->input('email');
-            if(!empty($email)){            
-                $user_row = array();           
+            if(!empty($email)){
+                $user_row = array();
                 $user_row['email'] = $email;
                 $this->user->update($user_row, $new_user->user_id);
             }
@@ -426,12 +426,12 @@ class EmployeeController extends Controller
         $public = '';
         $insurance = $request->input('insurance');
         if(is_array($insurance) && count($insurance) > 0){
-            $public = implode(",",$insurance); 
+            $public = implode(",",$insurance);
         }
 
         $employee_row = $request->only($fields);
         $employee_row['insurance'] = $public;
-      
+
        if($id == null){
             $employee_row['user_id'] = $user_id;
             $new_employee = $this->employee->create($employee_row);
@@ -445,7 +445,7 @@ class EmployeeController extends Controller
             $employeeid = Employee::where('user_id',$userid)->value('id');
             activity($userid,$message,$type,$employeeid,NULL,NULL,NULL);
 
-            
+
        }else{
             $this->employee->update($employee_row, $id);
 
@@ -500,7 +500,7 @@ class EmployeeController extends Controller
                 $name1 = isset($lic->license_image_back) ? $lic->license_image_back : '';
             }
 
-            
+
             $lic->emp_id = $emp_id;
             $lic->license_type = $request['license_type'][$key];
             $lic->other_type = $request['type_other'][$key];
@@ -532,16 +532,16 @@ class EmployeeController extends Controller
         }else{
            return redirect()->back()->withSuccess("Data successfully updated");
         }
-       
+
    }
     public function remove_image(Request $request)
     {
         $id=$request['id'];
         $data=$this->employee->show($id);
         $row = array();
-        if (file_exists(public_path('/dore/employee/'.$data->license_image))){     
+        if (file_exists(public_path('/dore/employee/'.$data->license_image))){
         unlink(public_path('/dore/employee/'.$data->license_image));
-        }  
+        }
         $row['license_image'] = "";
         $this->employee->update($row,$data->id);
         return redirect('/employees/');
@@ -626,11 +626,11 @@ class EmployeeController extends Controller
         $data['employee_id'] = $employee_id;
 
         $date = $this->request->get('date');
-        
+
         if(!empty($date)){
             $dayStart = new \DateTime($date);
 
-            if($dayStart->format("D") != "Mon"){               
+            if($dayStart->format("D") != "Mon"){
                 $dayStart->modify("last monday");
             }
 
@@ -651,11 +651,11 @@ class EmployeeController extends Controller
         $data['employee'] = $this->employee->show($employee_id);
         $data['week'] = [];
         $day = 0;
-        
+
         while($day < 7){
             $tempDay = new \DateTime($dayStart->format("Y-m-d"));
             $tempDay->modify("+".$day." day");
-            
+
             $data['week'][] = $tempDay;
             $data['rows'][] = $this->timesheet->getByDate($employee_id, $jobsite_id, $tempDay);
             $day++;
@@ -680,7 +680,7 @@ class EmployeeController extends Controller
             }
 
             for($j=0;$j<60;$j+=15){
-                
+
                 $temp_min =  str_pad($j, 2, '0', STR_PAD_LEFT);
 
                 if($i != $end_hour && $j <= 30)
@@ -691,7 +691,7 @@ class EmployeeController extends Controller
                     }else{
                         $temp_suffix = 'PM';
                     }
-                    
+
                     $time[]['key'] = $temp_hour.':'.$temp_min.' '.$temp_suffix;
                     $time[count($time)-1]['value'] = str_pad($i, 2, '0', STR_PAD_LEFT).':'.$temp_min.':00';
                 }
@@ -706,7 +706,7 @@ class EmployeeController extends Controller
         }
 
         $agent = new Agent();
-        
+
         if($agent->isMobile()){
             $data['is_mobile'] = true;
             return view('employees.timesheet', $data);
@@ -721,24 +721,24 @@ class EmployeeController extends Controller
         $employee = $this->employee->getEmployeeId(Auth::id());
         $employee_id = $employee->id;
 
-        $export_pdf = $this->request->input('export_pdf');           
+        $export_pdf = $this->request->input('export_pdf');
         $download_mode = $this->request->input('download_mode');
 
         $client_id = $this->request->input('client_id');
         $jobsite_id = $this->request->input('jobsite_id');
-        
+
         $ids = $this->request->input('id');
         $dates = $this->request->input('date');
         $starts = $this->request->input('start');
         $ends = $this->request->input('end');
         $break = $this->request->input('break');
         $status = $this->request->input('status');
-        
+
         for($i=0; $i< sizeof($ids); $i++)
         {
             // if date is empty don't proceed
             if(empty($starts[$i]) || empty($ends[$i])) continue;
-            
+
             $row = [];
             $id = $ids[$i];
             $row['date'] = $dates[$i];
@@ -752,11 +752,11 @@ class EmployeeController extends Controller
             $row['end'] = $end->format("Y-m-d H:i:s");
             $row['break'] = $break[$i];
             $row['status'] = $status[$i];
-            
+
 
             if($id == null)
             {
-                $id = $this->timesheet->create($row);                
+                $id = $this->timesheet->create($row);
             }else{
                 $this->timesheet->update($row,$id);
             }
@@ -764,8 +764,8 @@ class EmployeeController extends Controller
             // store images against last days entry
             if($i == 6 && !is_null($this->request->timesheetfile)){
                 $filename = $this->request->timesheetfile->store('public');
-               
-                if(isset($filename)){                
+
+                if(isset($filename)){
                     if(is_object($id))
                     {
                         $timesheet_id = $id->id;
@@ -782,9 +782,9 @@ class EmployeeController extends Controller
         {
             for($i=0; $i< sizeof($ids); $i++)
             {
-                $tempDay = new \DateTime($dates[$i]);               
+                $tempDay = new \DateTime($dates[$i]);
                 $rows[] = $this->timesheet->getByDate($employee_id, $jobsite_id, $tempDay);
-            }      
+            }
 
             $columns = ['Date', 'Start Time', 'End Time', 'Break', 'Status'];
 
@@ -795,9 +795,9 @@ class EmployeeController extends Controller
                 $row_date = Date('d/m/Y', strtotime($row->date));
                 $row_start = Date('H:i:s', strtotime($row->start));
                 $row_end = Date('H:i:s', strtotime($row->end));
-                $row_break = $row->break.' min(s)';                
-                
-                $row_status = ($row->status == 1) ? 'Approved' : 'Unapproved'; 
+                $row_break = $row->break.' min(s)';
+
+                $row_status = ($row->status == 1) ? 'Approved' : 'Unapproved';
 
                 $frows[] = [$row_date, $row_start, $row_end, $row_break, $row_status];
 
@@ -806,7 +806,7 @@ class EmployeeController extends Controller
 
             if($download_mode == 'pdf'){
                 view()->share('rows', $frows);
-                
+
                 PDF::setOptions(['dpi' => 150, 'orientation' => 'landscape', 'defaultFont' => 'sans-serif']);
 
                 $pdf = PDF::loadView('pdf');
@@ -816,7 +816,7 @@ class EmployeeController extends Controller
 
             Storage::disk('local')->put('timesheet.csv', $content);
 
-            return Storage::download('timesheet.csv'); 
+            return Storage::download('timesheet.csv');
         }
 
         $activity = new Activity;
@@ -831,22 +831,22 @@ class EmployeeController extends Controller
     {
         $employee = $this->employee->getEmployeeId(Auth::id());
         $employee_id = $employee->id;
-        $export_pdf = $this->request->input('export_pdf');           
+        $export_pdf = $this->request->input('export_pdf');
         $download_mode = $this->request->input('download_mode');
         $client_id = $this->request->input('client_id');
         $jobsite_id = $this->request->input('jobsite_id');
-        
+
         $ids = $this->request->input('id');
         $dates = $this->request->input('date');
         $starts = $this->request->input('start');
         $ends = $this->request->input('end');
         $break = $this->request->input('break');
         $status = $this->request->input('status');
-        
+
         for($i=0; $i< sizeof($ids); $i++)
         {
             // if date is empty don't proceed
-            if(empty($starts[$i]) || empty($ends[$i])) continue;   
+            if(empty($starts[$i]) || empty($ends[$i])) continue;
             $row = [];
             $id = $ids[$i];
             $row['date'] = $dates[$i];
@@ -859,7 +859,7 @@ class EmployeeController extends Controller
             $end->modify($ends[$i]);
             $row['end'] = $end->format("Y-m-d H:i:s");
             $row['break'] = $break[$i];
-            $row['status'] = $status[$i]; 
+            $row['status'] = $status[$i];
             if($id == null)
             {
                 $id = $this->timesheet->create($row);
@@ -867,7 +867,7 @@ class EmployeeController extends Controller
                 $employeeid = $employee->id;
                 $message = "entered a timesheet for Week Ending ".$row['start'];
                 $type = EMP_TIMESHEET;
-                activity($userid,$message,$type,$employeeid,NULL,$jobsite_id,NULL);                
+                activity($userid,$message,$type,$employeeid,NULL,$jobsite_id,NULL);
             }else{
                 $row['status'] = 0;
                 $this->timesheet->update($row,$id);
@@ -880,12 +880,12 @@ class EmployeeController extends Controller
             // store images against last days entry
             if($i == 6 && !is_null($this->request->timesheetfile)){
                 $filename = $this->request->timesheetfile->store('public');
-               
-                if(isset($filename)){                
+
+                if(isset($filename)){
                     if(is_object($id))
                     {
                         $timesheet_id = $id->id;
-                        
+
                     }else{
                         $timesheet_id = $id;
 
@@ -898,9 +898,9 @@ class EmployeeController extends Controller
         {
             for($i=0; $i< sizeof($ids); $i++)
             {
-                $tempDay = new \DateTime($dates[$i]);               
+                $tempDay = new \DateTime($dates[$i]);
                 $rows[] = $this->timesheet->getByDate($employee_id, $jobsite_id, $tempDay);
-            }      
+            }
             $columns = ['Date', 'Start Time', 'End Time', 'Break', 'Status'];
             $content = implode(',',$columns)."\r\n";
             $frows = array();
@@ -908,8 +908,8 @@ class EmployeeController extends Controller
                 $row_date = Date('d/m/Y', strtotime($row->date));
                 $row_start = Date('H:i:s', strtotime($row->start));
                 $row_end = Date('H:i:s', strtotime($row->end));
-                $row_break = $row->break.' min(s)';                
-                $row_status = ($row->status == 1) ? 'Approved' : 'Unapproved'; 
+                $row_break = $row->break.' min(s)';
+                $row_status = ($row->status == 1) ? 'Approved' : 'Unapproved';
                 $frows[] = [$row_date, $row_start, $row_end, $row_break, $row_status];
                 $content .= implode(',',[$row_date, $row_start, $row_end, $row_break, $row_status])."\r\n";
             }
@@ -920,9 +920,9 @@ class EmployeeController extends Controller
                 return $pdf->download('timesheet.pdf');
             }
             Storage::disk('local')->put('timesheet.csv', $content);
-            return Storage::download('timesheet.csv'); 
+            return Storage::download('timesheet.csv');
         }
-        
+
         return back();
     }
 
@@ -932,7 +932,7 @@ class EmployeeController extends Controller
         $data['employee_id'] = $id;
 
         $data['clients'] = $this->client->dropdown();
-        
+
         return view('employees.assign', $data);
     }
 
@@ -941,7 +941,7 @@ class EmployeeController extends Controller
         $employee_id = $request->input('employee_id');
         $client_id = $request->input('client_id');
         $jobsite_id = $request->input('jobsite_id');
-        
+
         //dd($this->employee->show($employee_id));
 
         $this->employee->attach($employee_id, $jobsite_id);
@@ -955,7 +955,7 @@ class EmployeeController extends Controller
 
     public function unassign($employee_id, $jobsite_id)
     {
-        $this->employee->detach($employee_id, $jobsite_id);        
+        $this->employee->detach($employee_id, $jobsite_id);
         $userid = Employee::where('id',$employee_id)->value('user_id');
         $message = " detached to a jobsite.";
         $type = EMP_REQ_APR;
@@ -1069,7 +1069,7 @@ class EmployeeController extends Controller
         $employee_row['first_name'] = $user['name'];
         $employee_row['email'] = $user['email'];
         $employee_row['status'] = 0;
-        
+
         Log::debug(json_encode($request->all()));
 
         $new_employee = $this->employee->create($employee_row);
@@ -1085,8 +1085,8 @@ class EmployeeController extends Controller
         $user['social'] = $request['social'];
         return view('employees.social',['user' => $user]);
         return redirect('/');
-       
-       
+
+
    }
-    
+
 }

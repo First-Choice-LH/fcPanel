@@ -13,8 +13,8 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-8 offset-lg-2">			
-			<div class=""> 
+		<div class="col-lg-8 offset-lg-2">
+			<div class="">
 			@if($errors->any())
 				<br/>
 			    <div class="alert alert-danger">
@@ -56,7 +56,7 @@
 				</div>
 			</div>
 
-			<div class="card padall30 mrb30">
+			{{-- <div class="card padall30 mrb30">
 				<h4>Login Details<hr class="hralignleft"/></h4>
 				<div class="form-group row">
 					<div class="col-lg-6">
@@ -76,13 +76,13 @@
 						<input type="password" class="form-control" name="password_confirmation" aria-describedby="password_confirmation" placeholder="Retype Password" value=""/>
 					</div>
 				</div>
-			</div>
+			</div> --}}
 
 			<div class="card padall30 mrb30">
 				<h4>Location<hr class="hralignleft"/></h4>
 
 				@if (\Request::is('employees/create'))
-				<div class="form-group row">				
+				<div class="form-group row">
 					<div class="col-lg-6">
 						<label for="client_id">Company</label>
 
@@ -97,12 +97,12 @@
 					</div>
 					<div class="col-lg-6">
 						<label for="jobsite_id">Jobsite</label>
-							
+
 						<select name="jobsite_id" class="form-control">
 							<option value="">Select Jobsite</option>
 						</select>
-					</div>	
-				</div>		
+					</div>
+				</div>
 				@else
 					<input type="hidden" value="0" name="client_id"/>
 					<input type="hidden" value="0" name="jobsite_id"/>
@@ -133,7 +133,7 @@
                     <div class="card">
                         <div class="card-header" id="headingOne">
                             <h4 class="accordian-title" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Bank Details 
+                                Bank Details
                                 <span class="fa align-right fa-minus"></span>
                             </h4>
                         </div>
@@ -148,7 +148,7 @@
                                         <label for="account_bsb">BSB Number</label>
                                         <input type="text" class="form-control bsb" name="account_bsb" aria-describedby="account_bsb" placeholder="BSB Number" value="{{ old('account_bsb', (isset($row)) ? $row->account_bsb : '') }}" maxlength="7"/>
                                     </div>
-                                </div>  
+                                </div>
                                 <div class="form-group row">
                                     <div class="col-lg-6">
                                         <label for="account_number">Account Number</label>
@@ -156,13 +156,13 @@
                                     </div>
                                     <div class="col-lg-6">
                                     </div>
-                                </div>  
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-header" id="headingTwo">
-                        
+
                             <h4 class="accordian-title" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                 Tax File Number
                                 <span class="fa align-right fa-plus"></span>
@@ -241,7 +241,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>  
+                    </div>
 
 				</div>
 
@@ -355,7 +355,7 @@
                                        <div class="col-lg-6">
                                            <label for="image">Upload Photo End</label>
                                            <input type="File" class="form-control" name="license_image_back[]" aria-describedby="image" placeholder="Image" value=""/>
-                                          
+
                                        </div>
                                    </div>
                                 </div>
@@ -371,13 +371,13 @@
                         <!--start status-->
                         <div class="form-group row">
                             <div class="col-lg-6">
-                                <label for="status">Status</label>  
-                                <div class="">      
-                                    <button type="button" onClick="setStatus(this, 'status', 0);"  class="btn @if(isset($row) && $row->status == 0) red-btn btn-selected @else red-invert-btn @endif"><i class="fas fa-times"></i></button>                     
-                                    <button type="button" onClick="setStatus(this, 'status', 1);"  class="btn @if(isset($row) && $row->status == 1) green-btn btn-selected @else green-invert-btn @endif"><i class="fas fa-check"></i></button>                     
-                                    <input type="hidden" id="status" name="status" value="@if(isset($row)) {{ $row->status }} @else 0 @endif"/>                                                     
+                                <label for="status">Status</label>
+                                <div class="">
+                                    <button type="button" onClick="setStatus(this, 'status', 0);"  class="btn @if(isset($row) && $row->status == 0) red-btn btn-selected @else red-invert-btn @endif"><i class="fas fa-times"></i></button>
+                                    <button type="button" onClick="setStatus(this, 'status', 1);"  class="btn @if(isset($row) && $row->status == 1) green-btn btn-selected @else green-invert-btn @endif"><i class="fas fa-check"></i></button>
+                                    <input type="hidden" id="status" name="status" value="@if(isset($row)) {{ $row->status }} @else 0 @endif"/>
                                 </div>
-                            </div>              
+                            </div>
                             <div class="col-lg-6"></div>
                         </div>
 
@@ -388,7 +388,7 @@
                         </div>
                         <!-- End status-->
                 </div>
-			
+
 			</form>
 		</div>
 		</div>
@@ -490,10 +490,10 @@
 }
 .green-btn{
     background-color:#469408;
-    color:#f6f6f6;  
+    color:#f6f6f6;
 	border-radius: 0;
 	font-size: 24px;
-	padding: 8px 20px;  
+	padding: 8px 20px;
 }
 .accordian-title{
     padding: 10px 0px;
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $("select[name=client_id]").on('change', function(){
         var client_id = $("select[name=client_id]").val();
         var ajax_get_jobsites_url = "{{ url('/api/client_jobsites/') }}/"+client_id;
-        
+
         $.get(ajax_get_jobsites_url, function(response){
             var jsondata = $.parseJSON(response);
             var html = '<option value="">Select Jobsite</option>';
@@ -564,14 +564,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	})
 });
 $('.bsb').on('keyup', function() {
-  var bsb = $(this).val().split("-").join(""); 
+  var bsb = $(this).val().split("-").join("");
   if (bsb.length > 0) {
     bsb = bsb.match(new RegExp('.{1,3}', 'g')).join("-");
   }
   $(this).val(bsb);
 });
 $('.tax').on('keyup', function() {
-  var tax = $(this).val().split(" ").join(""); 
+  var tax = $(this).val().split(" ").join("");
   if (tax.length > 0) {
     tax = tax.match(new RegExp('.{1,3}', 'g')).join(" ");
   }
@@ -609,12 +609,12 @@ $('.add-more-audience').click(function(){
     $(clone).removeClass('clone_licence');
     $(clone).removeClass('active');
     $('.audience-tab-content').append(clone);
-   
+
 });
-$('body').on('click', '.remove_product', function() {  
+$('body').on('click', '.remove_product', function() {
     var tabpane = $(this).closest('.licence_row').remove();
 });
-$('body').on('click', '.remove_product_first', function() {  
+$('body').on('click', '.remove_product_first', function() {
     var tabpane = $(this).closest('.licence_row').remove();
     var clone = $('.clone_licence').clone();
     $(clone).removeClass('clone_licence');
@@ -622,13 +622,13 @@ $('body').on('click', '.remove_product_first', function() {
     $(clone).find('.remove_product').remove();
     $('.audience-tab-content').append(clone);
 });
-$('body').on('click', '.image-preview', function() { 
+$('body').on('click', '.image-preview', function() {
     var src = $(this).attr('data-src');
     var url = "http://timesheets.firstchoicelabour.com.au/dore/employee/";
     $('#modal-image').attr('src',url+src);
-    $('#m_modal_6').modal('toggle'); 
+    $('#m_modal_6').modal('toggle');
 });
-$('body').on('change', '.license_type', function() { 
+$('body').on('change', '.license_type', function() {
     var val = $(this).val();
     if(val == 'Other'){
         $(this).closest('.form-group').find('.other_col').show();
