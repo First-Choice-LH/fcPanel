@@ -25,8 +25,11 @@
     .select2-results__message:has(.no-results-element:hover){
         background: #eee;
     }
-    .select2-selection__placeholder {
-        padding-left: 2px;
+    .select2-selection__placeholder, .select2-selection__rendered {
+        padding-left: 2px !important;
+    }
+    .select2-selection__clear {
+        margin-right: 9px;
     }
 </style>
 
@@ -420,6 +423,7 @@
             },
             initialView: 'dayGridMonth',
             firstDay: 1,
+            allowClear: true,
             viewDidMount: function(args) {
                 const calendarData  = args.view.getCurrentData();
                 const startDate     = moment(calendarData.dateProfile.currentRange.start).format('YYYY-MM-DD');
@@ -499,11 +503,15 @@
 
                 markup += `<td>${moment(row.created_at).format('MM/DD/YYYY')}</td>
                         <td>${row.comments == null ? '' : row.comments}</td>
-                        <td>
-                            <div class="d-block mb-1">
+                        <td>`;
+
+                if( type == 2 ) {
+                    markup  += `<div class="d-block mb-1">
                                 <select class="form-control employee-selection" data-position="${row.position_id}"></select>
-                            </div>
-                            <button class="btn btn-sm btn-default d-block m-auto" title="Edit this job"><i class="fa fa-edit"></i></button>
+                            </div>`;
+                }
+
+                markup += `<button class="btn btn-sm btn-default d-block m-auto" title="Edit this job"><i class="fa fa-edit"></i></button>
                         </td>
                 </tr>`;
             }

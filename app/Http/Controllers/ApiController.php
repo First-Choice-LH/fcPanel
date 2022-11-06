@@ -29,7 +29,7 @@ class ApiController extends Controller
     }
 
     public function getJobs(Request $request) {
-DB::enableQueryLog();
+
         $jobs           = Job::where([]);
 
         if($request->get('dated')) {
@@ -64,20 +64,6 @@ DB::enableQueryLog();
         return response()->json( $data );
     }
 
-    // function getCalendarJobEvents(Request $request) {
-    //     $calendarData     = [];
-    //     for($dated  = $request->get('startDate'); $dated <= $request->get('endDate'); $dated = date('Y-m-d', strtotime("+1 day", strtotime($dated))) ) {
-    //         $allocatedJobsCount     = Job::whereDate('start_time', $dated)->whereNotNull('employee_id')->count();
-    //         $unAllocatedJobsCount   = Job::whereDate('start_time', $dated)->whereNull('employee_id')->count();
-    //         $calendarData = [
-    //             'title'     => "Allocated Jobs($allocatedJobsCount)",
-    //             'start'     => $dated,
-    //             'extraProps'=> ['type' => 1]
-    //         ];
-    //     }
-    //     print_r($calendarData);
-    // }
-
     function getEmployees(Request $request) {
 
         $conditions         = [];
@@ -94,7 +80,7 @@ DB::enableQueryLog();
             $employees->where(function($query) use($request) {
                 $query->where('first_name', 'like', $request->get('q') . '%');
                 $query->orWhere('last_name', 'like', $request->get('q'). '%');
-                $query->orWhere('member_number', $request->get('q'));
+                $query->orWhere('phone', $request->get('q'));
             });
         }
 
