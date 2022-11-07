@@ -29,9 +29,9 @@ class SupervisorRequest extends FormRequest
                 //'jobsite_id' => 'required',
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
-                'username' => 'required|string|unique:users',
-                'password' => 'min:6',
-                'repassword' => 'required_with:password|same:password|min:6'
+                // 'username' => 'required|string|unique:users',
+                // 'password' => 'min:6',
+                // 'repassword' => 'required_with:password|same:password|min:6'
             ];
         }else{
             $rules = [

@@ -115,42 +115,19 @@ class SupervisorController extends Controller
 
         $id = $request->input('id');
         $jobsite_id = $request->input('jobsite_id');
-        if($id == null){
 
-            $validator = Validator::make($request->all(), [
-                'email' => 'required|email|unique:users',
-                // 'username' => 'required|string|max:20|unique:users',
-            ]);
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email|unique:supervisors'. ($id ? (',email,'.$id) : ''),
+            'client_id' => 'required'
+        ]);
 
-            if ($validator->fails()) {
-               return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $user_row = [];
-            $user_row['name'] = $request->input('first_name');
-            // $user_row['password'] = Hash::make($request->input('password'));
-            // $user_row['username'] = $request->input('username');
-            $user_row['email'] = $request->input('email');
-            $new_user = $this->user->createWithRole($user_row, 'supervisor');
-            $user_id = $new_user->id;
+        if ($validator->fails()) {
+           return redirect()->back()->withErrors($validator)->withInput();
         }
-        else{
 
-            // $pass = $request->input('password');
-            $new_user = $this->supervisor->show($id);
-            // if(!empty($pass)){
-            //     $user_row = array();
-            //     $user_row['password'] = Hash::make($pass);
-            //     $this->user->update($user_row, $new_user->user_id);
-            // }
-            $email = $request->input('email');
-            if(!empty($email)){
-                $user_row = array();
-                $user_row['email'] = $email;
-                $this->user->update($user_row, $new_user->user_id);
-            }
-            $user_id = $new_user->user_id;
-        }
         $fields = [
             'first_name',
             'last_name',
@@ -159,32 +136,24 @@ class SupervisorController extends Controller
             'client_id',
             'status'
         ];
+
         $supervisor_row = $request->only($fields);
-        $supervisor_row['user_id'] = $new_user->id;
 
         if($id == null){
             $new_supervisor = $this->supervisor->create($supervisor_row);
             $this->supervisor->attach($new_supervisor->id, $jobsite_id);
-            $userid = $user_id;
             $message = "created by Admin";
             $type = SUP_PROFILE;
-            $supervisorid = Supervisor::where('user_id',$userid)->value('id');
-            activity($userid,$message,$type,NULL,$supervisorid,NULL,NULL);
-
+            $supervisorid = $id;
+            activity(Auth::id(),$message,$type,NULL,$supervisorid,NULL,NULL);
         }
         else{
             unset($supervisor_row['user_id']);
             $this->supervisor->update($supervisor_row, $id);
-            $userid = $user_id;
-            $supervisorid = Supervisor::where('user_id',$userid)->value('id');
-            if(Auth::id() == $user_id){
-                $type = SUP_PROFILE;
-                $message = "updated profile";
-            }else{
-                $type = SUP_PRO_ADM;
-                $message = "updated by admin";
-            }
-            activity($userid,$message,$type,NULL,$supervisorid,NULL,NULL);
+            $supervisorid = $id;
+            $type = SUP_PRO_ADM;
+            $message = "updated by admin";
+            activity(Auth::id(),$message,$type,NULL,$supervisorid,NULL,NULL);
         }
         return redirect('/supervisors/');
     }
@@ -624,26 +593,6 @@ class SupervisorController extends Controller
 
         if($id != null){
             $email = $request->input('email');
-            if(!empty($email)){
-                $user_row = array();
-                $user_row['email'] = $email;
-                $this->user->update($user_row, $new_user->user_id);
-            }
-
-            $pass = $request->input('password');
-            if(!empty($pass)){
-
-                $validator = Validator::make($request->all(), [
-                    'password' => 'required|string|min:6|confirmed',
-                ]);
-                if ($validator->fails()) {
-                   return redirect()->back()->withErrors($validator)->withInput();
-                }
-
-                $user_row = array();
-                $user_row['password'] = Hash::make($pass);
-                $this->user->update($user_row, $new_user->user_id);
-            }
 
             $fields = [
                'first_name',
@@ -655,10 +604,10 @@ class SupervisorController extends Controller
            $supervisor_row = $request->only($fields);
            $this->supervisor->update($supervisor_row, $id);
 
-            $userid = $new_user->user_id;
+            $userid = Auth::id();
             $message = "updated profile";
             $type = SUP_PROFILE;
-            $supervisorid = Supervisor::where('user_id',$userid)->value('id');
+            $supervisorid = $id;
             activity($userid,$message,$type,NULL,$supervisorid,NULL,NULL);
         }
         else{

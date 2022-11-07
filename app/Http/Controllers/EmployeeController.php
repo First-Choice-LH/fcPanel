@@ -124,81 +124,27 @@ class EmployeeController extends Controller
         $id = $request->input('id');
         $jobsite_id = $request->input('jobsite_id');
 
-        if($id == null)
-        {
-            $validator = Validator::make($request->all(), [
-                'first_name' => 'required',
-                'last_name' => 'required',
-                'phone' => 'required',
-                'email' => 'required|unique:users',
-                // 'username' => 'required|string|max:20|unique:users',
-                // 'password' => 'required|string|min:6|confirmed',
-            ]);
-            if ($validator->fails()) {
-               return redirect()->back()->withErrors($validator)->withInput();
-            }
 
-            $user_row = [];
-            $user_row['name'] = $request->input('first_name');
-            $user_row['email'] = $request->input('email');
-            // $user_row['password'] = Hash::make($request->input('password'));
-            $user_row['username'] = $request->input('username');
-            $new_user = $this->user->createWithRole($user_row, 'employee');
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email|unique:employees'. ($id ? (',email,'.$id) : '')
+        ]);
 
-            $user_id = $new_user->id;
-            $name = '';
-        }else{
-
-            $validator = Validator::make($request->all(), [
-                'first_name' => 'required',
-                'last_name' => 'required',
-                'phone' => 'required',
-                'email' => 'required'
-            ]);
-            if ($validator->fails()) {
-               return redirect()->back()->withErrors($validator)->withInput();
-            }
-            $new_user = $this->employee->show($id);
-            // $user_obj = User::where('id',$new_user->user_id)->first();
-            // $old_username = $user_obj->username;
-            // $username = $request->input('username');
-            // if(!empty($username)){
-            //     if($old_username != $username){
-            //         $validator = Validator::make($request->all(), [
-            //             'username' => 'required|string|max:20|unique:users'
-            //         ]);
-            //         if ($validator->fails()) {
-            //            return redirect()->back()->withErrors($validator)->withInput();
-            //         }
-            //         $user_row = array();
-            //         $user_row['username'] = $username;
-            //         $this->user->update($user_row, $new_user->user_id);
-            //     }
-            // }
-            // $pass = $request->input('password');
-            // if(!empty($pass)){
-
-            //     $validator = Validator::make($request->all(), [
-            //         'password' => 'required|string|min:6|confirmed',
-            //     ]);
-            //     if ($validator->fails()) {
-            //        return redirect()->back()->withErrors($validator)->withInput();
-            //     }
-
-            //     $user_row = array();
-            //     $user_row['password'] = Hash::make($pass);
-            //     $this->user->update($user_row, $new_user->user_id);
-            // }
-            $email = $request->input('email');
-            if(!empty($email)){
-                $user_row = array();
-                $user_row['email'] = $email;
-                $this->user->update($user_row, $new_user->user_id);
-            }
-            $user_id = $new_user->user_id;
-            $emp_id = $new_user->id;
-            $name = $new_user->license_image;
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        if($id) {
+            $new_user   = $this->employee->show($id);
+        }
+
+        $name       = !empty($new_user) ? $new_user->license_image : '';
+
+
+        $email = $request->input('email');
+        $emp_id = $id;
 
         $file = $request->file('license_image');
         if($file != null ){
@@ -229,29 +175,23 @@ class EmployeeController extends Controller
 
 
         $employee_row = $request->only($fields);
-        $employee_row['user_id'] = $new_user->id;
         $employee_row['license_image'] = $name;
         $employee_row['insurance'] = $public;
 
         if($id == null){
-            $employee_row['user_id'] = $new_user->id;
             $new_employee = $this->employee->create($employee_row);
             $this->employee->attach($new_employee->id, $jobsite_id);
             $emp_id = $new_employee->id;
-            $userid = $user_id;
             $message = "created by Admin";
             $type = EMP_PROFILE;
-            //$employeeid = Employee::where('user_id',$userid)->value('id');
-            activity($userid,$message,$type,$emp_id,NULL,NULL,NULL);
+            activity(Auth::id(),$message,$type,$emp_id,NULL,NULL,NULL);
 
         }else{
             $emp = $this->employee->update($employee_row, $id);
-
-            $userid = $user_id;
             $message = "updated by Admin";
             $type = EMP_PROFILE;
-            $employeeid = Employee::where('user_id',$userid)->value('id');
-            activity($userid,$message,$type,$employeeid,NULL,NULL,NULL);
+            $emp_id = $id;
+            activity(Auth::id(),$message,$type,$emp_id,NULL,NULL,NULL);
         }
 
         /*start*/
@@ -340,73 +280,19 @@ class EmployeeController extends Controller
     }
     public function saveEmployee(Request $request){
 
-       $id = $request->input('id');
-       $jobsite_id = isset($request->jobsite_id) ? $request->jobsite_id : '';
+        $id = $request->input('id');
+        $jobsite_id = isset($request->jobsite_id) ? $request->jobsite_id : '';
 
-       if($id == null){
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email|unique:employees'
+        ]);
 
-            $validator = Validator::make($request->all(), [
-                'first_name' => 'required',
-                'last_name' => 'required',
-                'phone' => 'required',
-                'email' => 'required|email|unique:users',
-                'username' => 'required|string|max:20|unique:users',
-                'password' => 'required|string|min:6|confirmed',
-            ]);
-
-            if ($validator->fails()) {
-               return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $user_row = [];
-            $user_row['name'] = $request->input('first_name');
-            $user_row['email'] = $request->input('email');
-            $user_row['password'] = Hash::make($request->input('password'));
-            $user_row['username'] = $request->input('username');
-            $user_row['status'] = 0;
-            $user_row['accessToken'] = str_random(20);
-            $new_user = $this->user->createWithRole($user_row, 'employee');
-
-            $user_id = $new_user->id;
-            sendEmail($user_id,USER_VERIFY);
-            $name = '';
-
-        }else{
-            $validator = Validator::make($request->all(), [
-                'first_name' => 'required',
-                'last_name' => 'required',
-                'phone' => 'required',
-                'email' => 'required'
-            ]);
-            if ($validator->fails()) {
-               return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $pass = $request->input('password');
-            $new_user = $this->employee->show($id);
-            if(!empty($pass)){
-
-                $validator = Validator::make($request->all(), [
-                    'password' => 'required|string|min:6|confirmed',
-                ]);
-                if ($validator->fails()) {
-                   return redirect()->back()->withErrors($validator)->withInput();
-                }
-
-               $user_row = array();
-               $user_row['password'] = Hash::make($pass);
-               $this->user->update($user_row, $new_user->user_id);
-            }
-            $email = $request->input('email');
-            if(!empty($email)){
-                $user_row = array();
-                $user_row['email'] = $email;
-                $this->user->update($user_row, $new_user->user_id);
-            }
-            $user_id = $new_user->user_id;
-            $emp_id = $new_user->id;
-            $name = $new_user->license_image;
-       }
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $fields = [
             'first_name',
@@ -423,6 +309,7 @@ class EmployeeController extends Controller
             'abn',
             'status'
         ];
+
         $public = '';
         $insurance = $request->input('insurance');
         if(is_array($insurance) && count($insurance) > 0){
@@ -433,27 +320,23 @@ class EmployeeController extends Controller
         $employee_row['insurance'] = $public;
 
        if($id == null){
-            $employee_row['user_id'] = $user_id;
             $new_employee = $this->employee->create($employee_row);
             $emp_id = $new_employee->id;
             if($jobsite_id != ''){
                 $this->employee->attach($new_employee->id, $jobsite_id);
             }
-            $userid = $new_user->id;
             $message = "joined";
             $type = EMP_PROFILE;
-            $employeeid = Employee::where('user_id',$userid)->value('id');
-            activity($userid,$message,$type,$employeeid,NULL,NULL,NULL);
+            $employeeid = $id;
+            activity(Auth::id(),$message,$type,$employeeid,NULL,NULL,NULL);
 
 
        }else{
             $this->employee->update($employee_row, $id);
-
-            $userid = $user_id;
             $message = "changed account information";
             $type = EMP_PROFILE;
-            $employeeid = Employee::where('user_id',$userid)->value('id');
-            activity($userid,$message,$type,$employeeid,NULL,NULL,NULL);
+            $employeeid = $id;
+            activity(Auth::id(),$message,$type,$employeeid,NULL,NULL,NULL);
        }
 
         $old_lic = EmployeeLicence::where('emp_id',$emp_id)->pluck('id')->toArray();

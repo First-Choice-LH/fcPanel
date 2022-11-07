@@ -43,8 +43,8 @@ class EmployeeRepository extends BaseRepository implements EmployeeInterface{
 	public function attach($employee_id, $jobsite_id)
 	{
 		$check = $this->model->find($employee_id)->jobsites()->where('employee_id',$employee_id)->where('jobsite_id',$jobsite_id)->count();
-		
-		if($check == 0){			
+
+		if($check == 0){
 			return $this->model->find($employee_id)->jobsites()->attach([$jobsite_id]);
 		}else{
 			return true;
@@ -55,5 +55,9 @@ class EmployeeRepository extends BaseRepository implements EmployeeInterface{
 	{
 		return $this->model->find($employee_id)->jobsites()->detach([$jobsite_id]);
 	}
+
+    public function show($id) {
+        return $this->model->find($id);
+    }
 
 }
