@@ -15,22 +15,22 @@ Route::get('/', function () {
 	$user = Auth::user();
 
 	if(Auth::id() > 0 && $user->hasRole('admin')){
-    	return redirect('/dashboard');		
+    	return redirect('/dashboard');
 	}
 
 	if(Auth::id() > 0 && $user->hasRole('client')){
-    	return redirect('/clients/jobsites/');		
-	}
-	
-	if(Auth::id() > 0 && $user->hasRole('supervisor')){
-    	return redirect('/supervisors/dashboard/');		
-	}
-	
-	if(Auth::id() > 0 && $user->hasRole('employee')){
-    	return redirect('/employees/dashboard/');		
+    	return redirect('/clients/jobsites/');
 	}
 
-	return redirect('/login');	
+	if(Auth::id() > 0 && $user->hasRole('supervisor')){
+    	return redirect('/supervisors/dashboard/');
+	}
+
+	if(Auth::id() > 0 && $user->hasRole('employee')){
+    	return redirect('/employees/dashboard/');
+	}
+
+	return redirect('/login');
 
 });
 
@@ -97,7 +97,7 @@ Route::group(['middleware' => ['role:admin']], function () {
 	Route::get('/supervisors/jobsites/assign/{id}', 'SupervisorController@assign')->name('supervisors.assign');
 	Route::post('/supervisors/jobsites/assign/', 'SupervisorController@assign_save')->name('supervisors.assign.save');
 	Route::get('/supervisors/jobsites/unassign/{supervisor_id}/{jobsite_id}', 'SupervisorController@unassign')->name('supervisors.unassign');
-	
+
 
 	# Employees
 	Route::get('/employees/', 'EmployeeController@index')->name('employees');
@@ -149,18 +149,18 @@ Route::group(['middleware' => ['role:supervisor']], function () {
 	# Supervisors
 	Route::get('/supervisors/jobsites/', 'SupervisorController@jobsites')->name('supervisors.jobsites');
 	Route::get('/supervisors/jobsites/employees/timesheet/thankyou','SupervisorController@thankyou')->name('supervisors.jobsites.employees.timesheet.thankyou');
-	
+
 	Route::get('/supervisors/jobsites/employees/{client_id}/{jobsite_id}', 'SupervisorController@employees')->name('supervisors.jobsites.employees');
-	
+
 	//Route::get('/supervisors/jobsites/employees/timesheet/{client_id}/{jobsite_id}/{employee_id}', 'SupervisorController@timesheet')->name('supervisors.jobsites.employees.timesheet');
 	//Route::post('/supervisors/jobsites/employees/timesheet/', 'SupervisorController@timesheet_save')->name('supervisors.jobsites.employees.timesheet.save');
-	
+
 	 Route::get('/supervisors/activity','SupervisorController@activity')->name('supervisors.activity');
 
     Route::get('/supervisors/employee/', 'SupervisorController@employee')->name('supervisors.employee');
     Route::get('/supervisors/timesheets/', 'SupervisorController@employeeTimesheet')->name('supervisors.timesheets');
     Route::get('/supervisors/timesheets/{emp_id}/{jobsite_id}', 'SupervisorController@getTimesheet');
-    
+
     Route::get('/supervisors/myaccount/', 'SupervisorController@myaccount')->name('supervisors.myaccount');
     Route::post('/supervisors/Update/', 'SupervisorController@Update1')->name('supervisors.Update');
 
@@ -169,7 +169,7 @@ Route::group(['middleware' => ['role:supervisor']], function () {
 
     Route::get('/supervisors/pending/timesheets/', 'SupervisorController@sup_pending_req')->name('supervisors.sup_pending_req');
     Route::post('/supervisors/requests/','SupervisorController@approveRequest');
-	
+
 });
 
 Route::group(['middleware' => ['role:employee']], function () {

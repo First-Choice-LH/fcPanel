@@ -26,7 +26,7 @@
 			    </div>
 			@endif
 
-			<form role="form" method="post" action="{{ route('clients.save') }}" class="card-body">
+			<form role="form" method="post" action="{{ route('clients.save') }}" class="card-body" enctype="multipart/form-data">
 				{{ csrf_field() }}
 				<input type="hidden" name="id" value="{{ old('id', (isset($row)) ? $row->id : null) }}"/>
 
@@ -76,6 +76,87 @@
 					<label for="email">Email</label>
 					<input type="text" class="form-control" name="email" aria-describedby="email" placeholder="Email" value="{{ old('email', (isset($row)) ? $row->email : '') }}"/>
 				</div>
+            </div>
+            <div class="card padall30 mrb30">
+                <h4>Documents<hr class="hralignleft"/></h4>
+                <div class="audience-tab-content">
+                 @if(!empty($documents))
+                        @foreach($documents as $key => $doc)
+                          <div class="document_row">
+                                <input type="hidden" name="document_id[]" value="{{ $doc->id }}">
+                                @if($key == 0)
+                                <div class="form-group row">
+                                   <div class="col-lg-12 text-right">
+                                       <button type="button" class="btn btnbg remove_doc_first btn-sm"><i class="fas fa-times"></i> REMOVE</button>
+                                   </div>
+                                </div>
+                                @else
+                                <div class="form-group row">
+                                   <div class="col-lg-12 text-right">
+                                       <button type="button" class="btn btnbg remove_doc btn-sm"><i class="fas fa-times"></i> REMOVE</button>
+                                   </div>
+                                </div>
+                                @endif
+                               <div class="form-group row">
+                                    <div class="col-lg-6">
+                                        <label for="type">Document Type</label>
+                                         <select name="doc_type_id[]" class="form-control document_type" value="{{ $doc->doc_type_id }}">
+                                           <option value="">-- Select Type --</option>
+                                           @foreach ($documentTypes as $docType)
+                                            <option value="{{ $docType->id }}" {{ $doc->doc_type_id == $docType->id ? 'selected' : '' }}>{{ $docType->type }}</option>
+                                           @endforeach
+                                       </select>
+                                    </div>
+                                    <div class="col-lg-6 other_col">
+                                        <label for="type" class="head">Please Specify</label>
+                                        <input type="text" class="form-control" name="type_other[]" id="type_other" value="{{ $doc->other_type }}">
+                                    </div>
+                                </div>
+                               <div class="form-group row">
+                                   <div class="col-lg-6">
+                                       <label for="image">Upload Document</label>
+                                       <input type="File" class="form-control" name="document_file[]" aria-describedby="file" placeholder="file" value=""/>
+                                       @if($doc->doc_name != '')
+                                        <button type="button" class="btn btnbg file-preview" data-src="{{ $doc->doc_name }}"><i class="fa fa-eye"></i></button>
+                                       @endif
+                                   </div>
+                               </div>
+                            </div>
+                        @endforeach
+                        @else
+
+                            <div class="document_row">
+                                <div class="form-group row">
+                                    <div class="col-lg-6">
+                                        <label for="type">Document Type</label>
+                                         <select name="doc_type_id[]" id="document_type" class="form-control document_type" value="">
+                                           <option value="">-- Select Type --</option>
+                                           @foreach ($documentTypes as $docType)
+                                           <option value="{{ $docType->id }}">{{ $docType->type }}</option>
+                                           @endforeach
+                                       </select>
+                                    </div>
+                                    <div class="col-lg-6 other_col">
+                                        <label for="type" class="head">Please Specify</label>
+                                        <input type="text" class="form-control" name="type_other[]" id="type_other">
+                                    </div>
+                                   <div class="col-lg-6">
+                                       <label for="image">Upload Document</label>
+                                       <input type="File" class="form-control" name="document_file[]" aria-describedby="image" placeholder="Image" value=""/>
+                                   </div>
+                               </div>
+                            </div>
+
+                        @endif
+                 </div>
+
+                <div class="form-group row">
+                    <div class="col-lg-12 text-center">
+                        <button type="button" class="btn btnbg add-more-audience" ><i class="fa fa-plus"></i> ADD</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-row">
 				<div class="col-lg-4">
 					<label for="status">Status</label>
 					<div class="">
@@ -95,6 +176,74 @@
 		</div>
 		</div>
 	</div>
+
+
+    <div style="display: none;">
+        <div class="clone_document document_row">
+            <div class="form-group row">
+                <div class="col-lg-12 text-right">
+                    <button type="button" class="btn btnbg remove_doc btn-sm"><i class="fas fa-times"></i> REMOVE</button>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-6">
+                    <label for="type">Document Type</label>
+                    <select name="doc_type_id[]" class="form-control document_type" value="">
+                        <option value="">-- Select Type --</option>
+                        @foreach ($documentTypes as $docType)
+                            <option value="{{ $docType->id }}">{{ $docType->type }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-6 other_col">
+                    <label for="type" class="head_new">Please Specify</label>
+                    <input type="text" class="form-control" name="type_other[]" id="type_other_new">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-6">
+                    <label for="date">Expiration Date</label>
+                    <input type="date" class="form-control" name="document_date[]" aria-describedby="document_date" placeholder="Expiration Date" value=""/>
+                </div>
+                <div class="col-lg-6">
+                    <label for="lic_number">Document Number</label>
+                    <input type="text" class="form-control" name="document_number[]" aria-describedby="document_number" placeholder="Document Number" value=""/>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-6">
+                    <label for="image">Upload Photo Front</label>
+                    <input type="File" class="form-control" name="document_image[]" aria-describedby="image" placeholder="Image" value=""/>
+                </div>
+                <div class="col-lg-6">
+                    <label for="image">Upload Photo Back</label>
+                    <input type="File" class="form-control" name="document_image[]" aria-describedby="image" placeholder="Image" value=""/>
+                </div>
+            </div>
+        </div>
+     </div>
+
+
+     <div class="modal fade" id="m_modal_6" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+             <div class="modal-content">
+                 <div class="modal-header">
+                 <h5 class="modal-title" id="exampleModalLabel">
+                     Image Preview
+                 </h5>
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">
+                             ×
+                         </span>
+                     </button>
+                 </div>
+                 <div class="modal-body">
+                     <img src="" id="modal-image" width="100%">
+                 </div>
+             </div>
+         </div>
+     </div>
+
 </div>
 <style>
 .red-invert-btn {
@@ -126,6 +275,11 @@
 	padding: 8px 20px;
 }
 </style>
+
+@endsection
+
+@section('script')
+
 <script type="text/javascript">
 function setStatus(me, idName, value){
 	if(value == 0){
@@ -146,5 +300,62 @@ function setStatus(me, idName, value){
 	$(me).addClass('btn-selected');
 	$("#"+idName).val(value);
 }
+
+function remove(elem){
+    var result=confirm("Are you sure you want to delete file ?");
+    if(result==true)
+    {
+        var id = $(elem).data("id");
+        $.ajax({
+                type:'DELETE',
+                url:'/api/clients/documents/'+id,
+                success:function(result){
+                location.reload();
+            }
+        });
+    }
+}
+
+
+$(document).ready(function(){
+    $('.document_type').each(function(){
+        $(this).trigger('change');
+    });
+});
+
+$('.add-more-audience').click(function(){
+    var clone = $('.clone_document').clone();
+    $(clone).removeClass('clone_document');
+    $(clone).removeClass('active');
+    $('.audience-tab-content').append(clone);
+});
+
+$('body').on('click', '.remove_doc', function() {
+    var tabpane = $(this).closest('.document_row').remove();
+});
+
+$('body').on('click', '.remove_doc_first', function() {
+    var tabpane = $(this).closest('.document_row').remove();
+    var clone = $('.clone_document').clone();
+    $(clone).removeClass('clone_document');
+    $(clone).removeClass('active');
+    $(clone).find('.remove_doc').remove();
+    $('.audience-tab-content').append(clone);
+});
+
+$('body').on('click', '.file-preview', function() {
+    var src = $(this).attr('data-src');
+    var url = "{{url("/dore/client/")}}/" + src;
+    window.open(url);
+});
+$('body').on('change', '.document_type', function() {
+    var val = $(this).val();
+    if(val == 4){
+        $(this).closest('.form-group').find('.other_col').show();
+    }else{
+        $(this).closest('.form-group').find('.other_col').hide();
+    }
+});
 </script>
+
 @endsection

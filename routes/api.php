@@ -18,8 +18,11 @@ use Illuminate\Http\Request;
 // });
 
 Route::get('/client', 'ApiController@getClientDetail');
+Route::delete('/client/document', 'ClientController@removeFile');
+
 Route::get('/jobs', 'ApiController@getJobs');
 Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
+
 Route::get('/employees', 'ApiController@getEmployees');
 
 Route::get("/encrypt/project","ApiController@encryptProject");

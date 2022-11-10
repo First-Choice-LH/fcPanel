@@ -12,7 +12,11 @@ use App\Repository\Contract\JobsiteInterface as JobsiteInterface;
 use App\Repository\Contract\EmployeeInterface as EmployeeInterface;
 use App\Repository\Contract\TimesheetInterface as TimesheetInterface;
 use App\Http\Requests\ClientRequest as ClientRequest;
+use Illuminate\Support\Facades\Validator;
 use App\Client;
+use App\ClientDocType;
+use App\ClientDocument;
+use Carbon\Carbon;
 
 class ClientController extends Controller
 {
@@ -52,20 +56,34 @@ class ClientController extends Controller
 
     public function create()
     {
-        return view('clients.create');
+        $data['documentTypes']  = ClientDocType::all();
+        return view('clients.create', $data);
     }
 
     public function update($id)
     {
         $data = [];
-        $data['row'] = $this->client->show($id);
-
+        $data['documentTypes']  = ClientDocType::all();
+        $data['row']            = $this->client->show($id);
+        $data['documents']      = ClientDocument::where('client_id',$id)->get();
         return view('clients.create', $data);
     }
 
     public function save(ClientRequest $request)
     {
         $id = $request->input('id');
+
+        $validator = Validator::make($request->all(), [
+            'company_name' => 'required',
+            'office_address' => 'required',
+            'state' => 'required',
+            'country' => 'required',
+            'email' => 'required|email|unique:clients'. ($id ? (',email,'.$id) : '')
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $fields = [
             'company_name',
@@ -80,15 +98,51 @@ class ClientController extends Controller
             'status'
         ];
 
-        $client_row = $request->only($fields);
+        $client_row                     = $request->only($fields);
+        // $client_row['document']         = $documentName;
 
-        $client_row['user_id'] = 0;//$new_user->id;
+        $client_row['user_id'] = $id;//$new_user->id;
 
         if($id == null){
-            $this->client->create($client_row);
+            $client = $this->client->create($client_row);
+            $id     = $client->id;
         }else{
-            $this->client->update($client_row,$id);
+            $this->client->update($client_row, $id);
         }
+
+        $existingDocuments = ClientDocument::where('client_id', $id)->pluck('id')->toArray();
+        foreach($request['document_file'] as $key => $document) {
+
+            if(isset($request['document_id'][$key])){
+                $doc = ClientDocument::find($request['document_id'][$key]);
+                if (($key2 = array_search($request['document_id'][$key], $existingDocuments)) !== false) {
+                    unset($existingDocuments[$key2]);
+                }
+            }else{
+                $doc = new ClientDocument;
+            }
+
+            $file = $request['document_file'][$key];
+
+            if($file) {
+                $fileName = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('/dore/client'), $fileName);
+
+                if(!empty($doc->doc_name) && file_exists(public_path('/dore/client/'.$doc->doc_name)) ) {
+                    unlink(public_path('/dore/client/'.$doc->doc_name));
+                }
+            }else{
+                $fileName = isset($doc->doc_name) ? $doc->doc_name : '';
+            }
+
+            $doc->client_id     = $id;
+            $doc->doc_type_id   = $request['doc_type_id'][$key];
+            $doc->other_type    = $request['type_other'][$key];
+            $doc->doc_name      = $fileName;
+            $doc->save();
+        }
+
+        /*end*/
 
         return redirect('/clients/');
     }
@@ -104,6 +158,19 @@ class ClientController extends Controller
         $data['rows'] = $this->client->paginateByClient($client_id);
 
         return view('clients.jobsites', $data);
+    }
+
+    public function removeFile(Request $request)
+    {
+        $id=$request['id'];
+        $data=$this->client->show($id);
+        $row = array();
+        if (file_exists(public_path('/dore/clients/'.$data->document))){
+        unlink(public_path('/dore/clients/'.$data->license_image));
+        }
+        $row['license_image'] = "";
+        $this->employee->update($row,$data->id);
+        return redirect('/employees/');
     }
 
     public function employees($jobsite_id=0)
