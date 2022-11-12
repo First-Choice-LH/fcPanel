@@ -98,7 +98,11 @@
                                 </div>
                                 @endif
                                <div class="form-group row">
+                                    @if($doc->doc_name != '')
+                                    <div class="col-lg-5">
+                                    @else
                                     <div class="col-lg-6">
+                                    @endif
                                         <label for="type">Document Type</label>
                                          <select name="doc_type_id[]" class="form-control document_type" value="{{ $doc->doc_type_id }}">
                                            <option value="">-- Select Type --</option>
@@ -107,20 +111,20 @@
                                            @endforeach
                                        </select>
                                     </div>
+                                    @if($doc->doc_name != '')
+                                    <div class="col-lg-1 pl-0 mt-4">
+                                         <button type="button" class="btn btnbg file-preview" data-src="{{ $doc->doc_name }}"><i class="fa fa-eye"></i></button>
+                                    </div>
+                                    @endif
                                     <div class="col-lg-6 other_col">
                                         <label for="type" class="head">Please Specify</label>
                                         <input type="text" class="form-control" name="type_other[]" id="type_other" value="{{ $doc->other_type }}">
                                     </div>
+                                    <div class="col-lg-6">
+                                        <label for="image">Upload Document</label>
+                                        <input type="File" class="form-control" name="document_file[]" aria-describedby="file" placeholder="file" value=""/>
+                                    </div>
                                 </div>
-                               <div class="form-group row">
-                                   <div class="col-lg-6">
-                                       <label for="image">Upload Document</label>
-                                       <input type="File" class="form-control" name="document_file[]" aria-describedby="file" placeholder="file" value=""/>
-                                       @if($doc->doc_name != '')
-                                        <button type="button" class="btn btnbg file-preview" data-src="{{ $doc->doc_name }}"><i class="fa fa-eye"></i></button>
-                                       @endif
-                                   </div>
-                               </div>
                             </div>
                         @endforeach
                         @else
@@ -199,25 +203,9 @@
                     <label for="type" class="head_new">Please Specify</label>
                     <input type="text" class="form-control" name="type_other[]" id="type_other_new">
                 </div>
-            </div>
-            <div class="form-group row">
                 <div class="col-lg-6">
-                    <label for="date">Expiration Date</label>
-                    <input type="date" class="form-control" name="document_date[]" aria-describedby="document_date" placeholder="Expiration Date" value=""/>
-                </div>
-                <div class="col-lg-6">
-                    <label for="lic_number">Document Number</label>
-                    <input type="text" class="form-control" name="document_number[]" aria-describedby="document_number" placeholder="Document Number" value=""/>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-lg-6">
-                    <label for="image">Upload Photo Front</label>
-                    <input type="File" class="form-control" name="document_image[]" aria-describedby="image" placeholder="Image" value=""/>
-                </div>
-                <div class="col-lg-6">
-                    <label for="image">Upload Photo Back</label>
-                    <input type="File" class="form-control" name="document_image[]" aria-describedby="image" placeholder="Image" value=""/>
+                    <label for="image">Upload Document</label>
+                    <input type="File" class="form-control" name="document_file[]" aria-describedby="image" placeholder="Image" value=""/>
                 </div>
             </div>
         </div>
