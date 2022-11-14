@@ -87,7 +87,7 @@
                                 @if($key == 0)
                                 <div class="form-group row">
                                    <div class="col-lg-12 text-right">
-                                       <button type="button" class="btn btnbg remove_doc_first btn-sm"><i class="fas fa-times"></i> REMOVE</button>
+                                       <button type="button" class="btn btnbg remove_doc first_document btn-sm"><i class="fas fa-times"></i> REMOVE</button>
                                    </div>
                                 </div>
                                 @else
@@ -289,21 +289,30 @@ function setStatus(me, idName, value){
 	$("#"+idName).val(value);
 }
 
-function remove(elem){
-    var result=confirm("Are you sure you want to delete file ?");
-    if(result==true)
-    {
-        var id = $(elem).data("id");
+function remove(docId, $elem) {
+    if(confirm("Are you sure you want to delete file ?")){
         $.ajax({
-                type:'DELETE',
-                url:'/api/clients/documents/'+id,
-                success:function(result){
-                location.reload();
+            type:'DELETE',
+            url:'/api/client/document?' + $.param({
+                "clientId"      : $('input[name="id"]').val(),
+                "docId"         : docId
+            }),
+            success:function(response) {
+                if(response) {
+                    if( $elem.hasClass('first-document') ) {
+                        var clone = $('.clone_document').clone();
+                        $(clone).removeClass('clone_document');
+                        $(clone).removeClass('active');
+                        $(clone).find('.remove_doc').remove();
+                        $('.audience-tab-content').append(clone);
+                    }
+
+                    $elem.closest('.document_row').remove();
+                }
             }
         });
     }
 }
-
 
 $(document).ready(function(){
     $('.document_type').each(function(){
@@ -319,16 +328,8 @@ $('.add-more-audience').click(function(){
 });
 
 $('body').on('click', '.remove_doc', function() {
-    var tabpane = $(this).closest('.document_row').remove();
-});
-
-$('body').on('click', '.remove_doc_first', function() {
-    var tabpane = $(this).closest('.document_row').remove();
-    var clone = $('.clone_document').clone();
-    $(clone).removeClass('clone_document');
-    $(clone).removeClass('active');
-    $(clone).find('.remove_doc').remove();
-    $('.audience-tab-content').append(clone);
+    let docId   = $(this).parents('.form-group').prev('input').val();
+    remove(docId, $(this));
 });
 
 $('body').on('click', '.file-preview', function() {

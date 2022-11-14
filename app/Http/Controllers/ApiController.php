@@ -7,6 +7,7 @@ use App\Repository\Contract\JobsiteInterface as JobsiteInterface;
 use App\Client;
 use App\Job;
 use App\Employee;
+use App\ClientDocument;
 use DB;
 
 class ApiController extends Controller
@@ -98,7 +99,21 @@ class ApiController extends Controller
     }
 
 
-    public function encryptProject(){
+    public function removeClientDocument(Request $request) {
 
+        $document = ClientDocument::where([
+            'id'        => $request->get('docId'),
+            'client_id' => $request->get('clientId')
+        ])->first();
+
+        $isDeleted      = false;
+
+        if($document) {
+            $isDeleted = $document->delete();
+
+            if($isDeleted) @unlink(public_path('/dore/client/'.$document->doc_name));
+        }
+
+        return response()->json($isDeleted);
     }
 }

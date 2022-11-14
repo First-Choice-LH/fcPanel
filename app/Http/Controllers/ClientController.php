@@ -160,19 +160,6 @@ class ClientController extends Controller
         return view('clients.jobsites', $data);
     }
 
-    public function removeFile(Request $request)
-    {
-        $id=$request['id'];
-        $data=$this->client->show($id);
-        $row = array();
-        if (file_exists(public_path('/dore/clients/'.$data->document))){
-        unlink(public_path('/dore/clients/'.$data->license_image));
-        }
-        $row['license_image'] = "";
-        $this->employee->update($row,$data->id);
-        return redirect('/employees/');
-    }
-
     public function employees($jobsite_id=0)
     {
         $client = $this->client->getClientId(Auth::id());

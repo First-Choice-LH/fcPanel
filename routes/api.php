@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 // });
 
 Route::get('/client', 'ApiController@getClientDetail');
-Route::delete('/client/document', 'ClientController@removeFile');
+Route::delete('/client/document', 'ApiController@removeClientDocument');
 
 Route::get('/jobs', 'ApiController@getJobs');
 Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
