@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Repository\Contract\JobsiteInterface as JobsiteInterface;
+use App\Repository\Contract\EmployeeInterface as EmployeeInterface;
 use App\Client;
 use App\Job;
 use App\Employee;
 use App\ClientDocument;
 use DB;
+use Auth;
 
 class ApiController extends Controller
 {
     private $jobsite;
+    private $employee;
 
-    public function __construct(JobsiteInterface $jobsite){
-        $this->jobsite = $jobsite;
+    public function __construct(JobsiteInterface $jobsite, EmployeeInterface $employee){
+        $this->jobsite  = $jobsite;
+        $this->employee = $employee;
     }
 
     public function client_jobsites($id=0){
@@ -47,17 +52,15 @@ class ApiController extends Controller
             });
         }
 
-        if($request->get('type') == '1') {
-            $jobs->whereNotNull('employee_id');
-        } else if($request->get('type') == '2') {
-            $jobs->whereNull('employee_id');
+        if($request->get('status') != '') {
+            $jobs->where('status', $request->get('status'));
         }
 
 
         $data = [];
         if( $request->get('calendarView') == true ) {
-            $jobs->select(DB::raw('COUNT(id) AS events'), DB::raw('CAST(start_time AS DATE) AS start'), DB::raw('CAST(end_time AS DATE) AS end'), 'employee_id');
-            $data   = $jobs->groupBy(DB::raw('CAST(start_time AS DATE)'), DB::raw('CAST(end_time AS DATE)'), 'employee_id')->get();
+            $jobs->select(DB::raw('COUNT(id) AS events'), DB::raw('CAST(start_time AS DATE) AS start'), DB::raw('CAST(end_time AS DATE) AS end'), 'status');
+            $data   = $jobs->groupBy(DB::raw('CAST(start_time AS DATE)'), DB::raw('CAST(end_time AS DATE)'), 'status')->get();
         } else {
             $data   = $jobs->with(['client', 'jobsite', 'position', 'supervisor', 'employee', 'allocator', 'updater'])->get();
         }
@@ -89,10 +92,16 @@ class ApiController extends Controller
 
         // transform data for jquery autocomplete
         foreach($data as $employee) {
-            $transformedData['results'][] = [
+            $dataRow        = [
                 'id'    => $employee->id,
                 'text'  => $employee->first_name.' '.$employee->last_name
             ];
+            // Need to return job id with employees when searched against a job (to handle job assignment from frontend)
+            if( $request->get('job') ) {
+                $dataRow['jobId']   = $request->get('job');
+            }
+
+            $transformedData['results'][] = $dataRow;
         }
 
         return response()->json( $transformedData );
@@ -115,5 +124,44 @@ class ApiController extends Controller
         }
 
         return response()->json($isDeleted);
+    }
+
+    public function addEmployee(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'first_name'    => 'required',
+            'phone'         => 'required',
+            'position_id'   => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all());
+        }
+
+        $employeeData   = $request->only('first_name', 'last_name', 'phone', 'position_id');
+        DB::beginTransaction();
+
+        $employee = $this->employee->create($employeeData);
+        $message = "created by Admin";
+        $type = EMP_PROFILE;
+        activity(1, $message, $type, $employee->id, NULL, NULL, NULL);
+
+        DB::commit();
+        return response()->json('Employee added successfully');
+    }
+
+    public function assignJobToEmployee(Request $request) {
+        if(!$request->get('empId')) {
+            return response()->json('Employee information is missing from the request');
+        } else if(!$request->get('jobId')) {
+            return response()->json('Job information is missing from the request');
+        }
+
+        $updated = Job::find( $request->get('jobId') )->update([
+            'employee_id'   => $request->get('empId'),
+            'status'        => '1'
+        ]);
+
+        return response()->json($updated);
     }
 }

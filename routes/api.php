@@ -24,5 +24,7 @@ Route::get('/jobs', 'ApiController@getJobs');
 Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
 
 Route::get('/employees', 'ApiController@getEmployees');
+Route::post('/employee', 'ApiController@addEmployee');
+Route::post('/employee/job', 'ApiController@assignJobToEmployee');
 
 Route::get("/encrypt/project","ApiController@encryptProject");

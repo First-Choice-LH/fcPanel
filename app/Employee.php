@@ -34,6 +34,11 @@ class Employee extends Model{
 		return $this->belongsToMany('App\Jobsite');
 	}
 
+    public function jobs()
+	{
+		return $this->belongsToMany('App\Job');
+	}
+
 	public function position()
 	{
 		return $this->hasOne('\App\Position');

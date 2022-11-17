@@ -3,6 +3,7 @@
 @section('content')
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/styles/metro/notify-metro.min.css" integrity="sha512-PlmS4kms+fh6ewjUlXryYw0t4gfyUBrab9UB0vqOojV26QKvUT9FqBJTRReoIZ7fO8p0W/U9WFSI4MAdI1Zm+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
     #calendar {
@@ -341,6 +342,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form id="quickAddEmployeeForm">
+                    {{ csrf_field() }}
                     <div class="modal-header">
                         <h4 class="modal-title" id="addEmployeeModalLabel"><i class="fa fa-user" aria-hidden="true"></i> Quick Add Employee</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -351,22 +353,22 @@
                         <div class="form-group row">
                             <div class="col-lg-6">
                                 <label for="first_name">First Name</label>
-                                <input type="text" class="form-control" name="first_name" aria-describedby="first_name" placeholder="First Name" value="{{ old('first_name', (isset($row)) ? $row->first_name : '') }}" />
+                                <input type="text" class="form-control" name="first_name" id="emp_first_name" placeholder="First Name" value="{{ old('first_name', (isset($row)) ? $row->first_name : '') }}" />
                             </div>
                             <div class="col-lg-6">
                                 <label for="last_name">Last Name</label>
-                                <input type="text" class="form-control" name="last_name" aria-describedby="last_name" placeholder="Last Name" value="{{ old('last_name', (isset($row)) ? $row->last_name : '') }}"/>
+                                <input type="text" class="form-control" name="last_name" id="emp_last_name" placeholder="Last Name" value="{{ old('last_name', (isset($row)) ? $row->last_name : '') }}"/>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-lg-6">
                                 <label for="phone">Phone</label>
-                                <input type="text" class="form-control" name="phone" aria-describedby="phone" placeholder="Phone" value="{{ old('phone', (isset($row)) ? $row->phone : '') }}" />
+                                <input type="text" class="form-control" name="phone" id="emp_phone" placeholder="Phone" value="{{ old('phone', (isset($row)) ? $row->phone : '') }}" />
                             </div>
                             <div class="col-lg-6">
                                 <label for="position">Position</label>
-                                <select name="position_id" class="form-control">
+                                <select name="position_id" id="emp_position_id" class="form-control">
                                     <option value="">Select Position</option>
                                     @foreach ($positions as $position)
                                     <option value="{{ $position->id }}">
@@ -379,9 +381,9 @@
                     </div>
 
                     <div class="modal-footer">
-                        <div class="mr-auto"><a href="javascript:closeEmployeePopupAndRedirect();" class="alert-link text-info">Add complete information</a></div>
+                        <div class="mr-auto"><a href="javascript:closeEmployeePopupAndRedirect();" title="Open employee form in new tab" class="alert-link text-info">Add complete information</a></div>
                         <button type="button" class="btn btnbg btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btnbg btn-sm btn-primary" data-dismiss="modal">Quick Add</button>
+                        <button type="submit" class="btn btnbg btn-sm btn-primary">Quick Add</button>
                     </div>
                 </form>
             </div>
@@ -397,6 +399,7 @@
 @section('script')
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
 
     var employees = [];
@@ -408,14 +411,14 @@
         });
     @endforeach
 
+    var calendar;
     $(function() {
-
         var eventsSource = {
             textColor: 'white'
         };
 
         var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        calendar = new FullCalendar.Calendar(calendarEl, {
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -424,18 +427,12 @@
             initialView: 'dayGridMonth',
             firstDay: 1,
             allowClear: true,
-            viewDidMount: function(args) {
-                const calendarData  = args.view.getCurrentData();
-                const startDate     = moment(calendarData.dateProfile.currentRange.start).format('YYYY-MM-DD');
-                const endDate       = moment(calendarData.dateProfile.currentRange.end).format('YYYY-MM-DD');
-
-                loadCalendarEvents(startDate, endDate);
-            },
+            eventSources: loadCalendarEvents,
             eventClick: function(info) {
                 const startDate = info.event.startStr;
-                loadJobs(info.event.extendedProps.type, startDate);
+                loadJobs(info.event.extendedProps.status, startDate);
 
-                if(info.event.extendedProps.type == 1) {
+                if(info.event.extendedProps.status == 1) {
                     $('#aJobsModal').modal('show');
                 } else {
                     $('#uJobsModal').modal('show');
@@ -445,35 +442,38 @@
 
         calendar.render();
 
-        function loadCalendarEvents(startDate, endDate) {
+        function loadCalendarEvents(info, resolve, reject) {
+
+            const startDate     = moment(info.start).format('YYYY-MM-DD');
+            const endDate       = moment(info.end).format('YYYY-MM-DD');
+
             $.get("/api/jobs", { startDate, endDate, calendarView: true }, function(response) {
                 let events = [];
                 for(let job of response) {
-                    let title = job.employee_id ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
+                    let title = job.status == 1 ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
                     events.push({
                         title           : title,
                         start           : job.start,
                         extendedProps   : {
-                            type: job.employee_id ? 1 : 2
+                            status: job.status
                         },
-                        color   : job.employee_id ? 'green' : 'red',
+                        color   : job.status == 1 ? 'green' : 'red',
                     });
                 }
 
-                eventsSource.events = events;
-                calendar.addEventSource(eventsSource);
+                resolve(events);
             });
         }
 
-        function loadJobs(type, dated) {
-            $.get("/api/jobs", { type, dated : encodeURIComponent(dated)}, function(response) {
-                populateJobs(type, response);
+        function loadJobs(status, dated) {
+            $.get("/api/jobs", { status, dated : encodeURIComponent(dated)}, function(response) {
+                populateJobs(status, response);
             });
         }
 
-        function populateJobs(type, response) {
+        function populateJobs(status, response) {
 
-            const namingPrefix  = type == '1' ? 'a' : 'u';
+            const namingPrefix  = status == '1' ? 'a' : 'u';
 
             var tableBody = document.getElementById(`${namingPrefix}JobsTableBody`);
             // Remove all rows after first two (loading and no results)
@@ -492,7 +492,7 @@
                     <td>${row.supervisor.first_name} ${row.supervisor.last_name}</td>
                     <td>${row.supervisor.phone}</td>`;
 
-                if( type == 1 ) {
+                if( status == 1 ) {
                     markup += `<td>${row.employee.first_name} ${row.employee.last_name}</td>`;
                     markup += `<td>${row.employee.phone}</td>`;
                     markup += `<td>${row.allocator ? row.allocator.name : ''}</td>`;
@@ -505,9 +505,9 @@
                         <td>${row.comments == null ? '' : row.comments}</td>
                         <td>`;
 
-                if( type == 2 ) {
+                if( status == 0 ) {
                     markup  += `<div class="d-block mb-1">
-                                <select class="form-control employee-selection" data-position="${row.position_id}"></select>
+                                <select class="form-control employee-selection" data-job="${row.id}" data-position="${row.position_id}"></select>
                             </div>`;
                 }
 
@@ -530,7 +530,7 @@
 
             $.ajax({
                 type : "GET",
-                url  : "/getUsername/"+username,
+                url  : "/getsites/",
                 datatype : "json",
                 success : function(result){
                     $('#login_form').hide();
@@ -540,10 +540,26 @@
             });
         });
 
+        $('#quickAddEmployeeForm').submit(function(e) {
+            e.preventDefault();
+            $.post('api/employee', $(this).serialize(), function(response) {
+                if(Array.isArray(response)) {
+                    response.reverse();
+                    for(let err of response) {
+                        $.notify(err);
+                    }
+                } else {
+                    $.notify(response, "success");
+                    $('#addEmployeeModal').modal('hide');
+                    calendar.refetchEvents();
+                }
+            });
+        });
+
     });
 
     function showAddEmployeePopup() {
-        $('.select2-container--open').removeClass('select2-container--open');
+        $(".employee-selection").select2("close");
         $('#addEmployeeModal').modal('show');
     }
 
@@ -558,7 +574,8 @@
                 data: function (params) {
                     var query = {
                         q       : params.term,
-                        position: $(this).data('position')
+                        position: $(this).data('position'),
+                        job     : $(this).data('job'),
                     }
                     return query;
                 }
@@ -567,7 +584,19 @@
                 noResults: getSelect2AddEmployeeOptionMarkup,
                 inputTooShort: getSelect2AddEmployeeOptionMarkup
             }
+        }).on("select2:selecting", function(e) {
+            const selectedEmp   = e.params.args.data;
+            $.post('api/employee/job', {empId : selectedEmp.id, jobId: selectedEmp.jobId}, function(response) {
+                if( response == true) {
+                    $.notify('Employee has been assigned with the job successfully', "success");
+                    $(e.currentTarget).parents('tr').first().remove();
+                    calendar.refetchEvents()
+                } else if(response) {
+                    $.notify(response);
+                }
+            });
         });
+
 
         function getSelect2AddEmployeeOptionMarkup() {
             return $("<div onclick='showAddEmployeePopup()' class='no-results-element'>Add new employee</div>");
@@ -579,5 +608,6 @@
         // New tab instead of redirecting
         window.open('{{url("employee/create")}}');
     }
+
 </script>
 @endsection

@@ -6,6 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Job extends Model
 {
+    protected $fillable = [
+        'client_id',
+        'jobsite_id',
+        'supervisor_id',
+        'position_id',
+        'employee_id',
+        'assigned_by',
+        'last_updated_by',
+        'start_time',
+        'end_time',
+        'comments',
+        'status'
+   ];
+
     public function client()
 	{
 		return $this->hasOne('App\Client', 'id', 'client_id');

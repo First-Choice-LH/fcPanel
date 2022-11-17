@@ -25,6 +25,7 @@ class CreateJobsTable extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
             $table->string('comments')->nullable();
+            $table->enum('status', [0, 1, 2, 3, 4])->default(0);
 
             $table->foreign('client_id')->references('id')->on('clients');
             $table->foreign('jobsite_id')->references('id')->on('jobsites');
