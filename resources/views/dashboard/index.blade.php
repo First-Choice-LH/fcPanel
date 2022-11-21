@@ -275,65 +275,67 @@
     <div class="modal fade" id="jobRequestModal" tabindex="-1" role="dialog" aria-labelledby="jobRequestModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="unallocatedJobsModalLabel">New Job Request</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <div class="col-lg-6">
-                            <label for="address">Client</label>
-                            <select class="form-control" name="client_id">
-                                <option value="">Select</option>
-                                @foreach ($clients as $client)
-                                <option value="{{ $client->id }}" @if((isset($row) && $row->client->id == $client->id) || (\Request::post('client_id') == $client->id) )selected="selected"@endif>
-                                    {{ $client->company_name }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-lg-6">
-                            <label for="address">Address</label>
-                            <input type="text" class="form-control" name="address" aria-describedby="address" placeholder="Address"/>
-                        </div>
+                <form id="jobRequestForm">
+                    <input type="hidden" id="startDate" name="start_date" />
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="unallocatedJobsModalLabel">Add New Job On <span id="jobRequestDateContainer"></span></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-
-                    <div class="form-group row">
-                        <div class="col-lg-6">
-                            <label for="contactName">Contact Name</label>
-                            <input type="text" class="form-control" name="contact_name" aria-describedby="contactName" placeholder="Contact Name"/>
-                        </div>
-                        <div class="col-lg-6">
-                            <label for="contactNo">Contact Number</label>
-                            <input type="text" class="form-control" name="contact_no" aria-describedby="contactNo" placeholder="Contact Number"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <div class="col-lg-6">
-                            <label for="requestPosition">Position Requested</label>
-                            <select class="form-control" name="client_id">
-                                <option value="">Select</option>
-                                @foreach ($positions as $position)
-                                    <option value="{{ $position->id }}">
-                                        {{ $position->title }}
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <div class="col-lg-6">
+                                <label for="address">Client</label>
+                                <select class="form-control" name="client_id" id="clientId">
+                                    <option value="">-Select-</option>
+                                    @foreach ($clients as $client)
+                                    <option value="{{ $client->id }}" @if((isset($row) && $row->client->id == $client->id) || (\Request::post('client_id') == $client->id) )selected="selected"@endif>
+                                        {{ $client->company_name }}
                                     </option>
-                                @endforeach
-                            </select>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="address">Job Site</label>
+                                <select class="form-control" name="jobsite_id" id="jobsiteId">
+                                    <option value="">-Select Job Site-</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-lg-6">
-                            <label for="comments">Comments</label>
-                            <textarea class="form-control" placeholder="Any special notes?"></textarea>
+
+                        <div class="form-group row">
+                            <div class="col-lg-6">
+                                <label for="address">Supervisor</label>
+                                <select class="form-control" name="supervisor_id" id="supervisorId">
+                                    <option value="">-Select Supervisor-</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="requestPosition">Position Requested</label>
+                                <select class="form-control" name="position_id">
+                                    <option value="">Select</option>
+                                    @foreach ($positions as $position)
+                                        <option value="{{ $position->id }}">
+                                            {{ $position->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-lg-6">
+                                <label for="comments">Comments</label>
+                                <textarea class="form-control" placeholder="Any special notes?"></textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btnbg btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-
+                    <div class="modal-footer">
+                        <button type="button" class="btn btnbg btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btnbg btn-sm btn-primary">Add Job</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -437,6 +439,9 @@
                 } else {
                     $('#uJobsModal').modal('show');
                 }
+            },
+            dateClick: function(info) {
+                showAddJobModal(info.dateStr);
             }
         });
 
@@ -526,17 +531,24 @@
 
         }
 
-        $('#client_id').change(function() {
-
-            $.ajax({
-                type : "GET",
-                url  : "/getsites/",
-                datatype : "json",
-                success : function(result){
-                    $('#login_form').hide();
-                    $('#username').val(result);
-                    $('#login_form').submit();
+        $('#clientId').change(function() {
+            $('#supervisorId').children().not(':first').remove();
+            $.get("api/jobsites", { clientId: $(this).val()}, function(jobsites){
+                let optionsMarkup = '<option>-Select Job Site-</option>';
+                for(let job of jobsites) {
+                    optionsMarkup   += `<option value="${job.id}">${job.title} - ${job.address}</option>`;
                 }
+                $('#jobsiteId').html(optionsMarkup);
+            });
+        });
+
+        $('#jobsiteId').change(function() {
+            $.get("api/supervisors", { jobsiteId: $(this).val()}, function(supervisors){
+                let optionsMarkup = '<option>-Select Supervisor-</option>';
+                for(let person of supervisors) {
+                    optionsMarkup   += `<option value="${person.id}">${person.first_name} ${person.last_name}</option>`;
+                }
+                $('#supervisorId').html(optionsMarkup);
             });
         });
 
@@ -556,7 +568,30 @@
             });
         });
 
+        $('#jobRequestForm').submit(function(e) {
+            e.preventDefault();
+            $.post('api/job', $(this).serialize(), function(response) {
+                if(Array.isArray(response)) {
+                    response.reverse();
+                    for(let err of response) {
+                        $.notify(err);
+                    }
+                } else {
+                    $.notify(response, "success");
+                    $('#jobRequestModal').modal('hide');
+                    calendar.refetchEvents();
+                }
+            });
+        });
+
     });
+
+    function showAddJobModal(dateString) {
+        $('#jobRequestDateContainer').text(moment(dateString).format('DD/MM/YYYY'));
+        const addJobDate  = moment(dateString).format('YYYY-MM-DD');
+        $('#startDate').val(addJobDate);
+        $('#jobRequestModal').modal('show');
+    }
 
     function showAddEmployeePopup() {
         $(".employee-selection").select2("close");

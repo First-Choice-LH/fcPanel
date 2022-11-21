@@ -10,6 +10,8 @@ use App\Client;
 use App\Job;
 use App\Employee;
 use App\ClientDocument;
+use App\Jobsite;
+use App\Supervisor;
 use DB;
 use Auth;
 
@@ -66,6 +68,52 @@ class ApiController extends Controller
         }
 
         return response()->json( $data );
+    }
+
+    public function getJobsites(Request $request) {
+        $jobsites    = Jobsite::where('client_id', $request->get('clientId'))->get();
+        return response()->json( $jobsites );
+    }
+
+    public function getSupervisors(Request $request) {
+        $supervisorIds     = [];
+        if($request->get('jobsiteId')) {
+            $supervisorRelations   = DB::table('jobsite_supervisor')->where('jobsite_id', $request->get('jobsiteId'))->get();
+            foreach($supervisorRelations as $relation) {
+                $supervisorIds[]    = $relation->supervisor_id;
+            }
+
+            $supervisors    = Supervisor::find($supervisorIds);
+
+        } else{
+            $supervisors    = Supervisor::all();
+        }
+
+        return response()->json( $supervisors );
+    }
+
+    public function createJob(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'client_id'     => 'required',
+            'jobsite_id'    => 'required',
+            'supervisor_id'    => 'required',
+            'start_date'    => 'required',
+            'position_id'   => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all());
+        }
+
+        $jobData                = $request->only('client_id', 'jobsite_id', 'supervisor_id', 'position_id', 'comments');
+
+
+        $jobData['start_time']  = $request->get('start_date');
+        $jobData['end_time']    = $request->get('start_date');
+
+        Job::create($jobData);
+        return response()->json( $jobData );
     }
 
     function getEmployees(Request $request) {

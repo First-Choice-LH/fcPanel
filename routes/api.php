@@ -20,7 +20,10 @@ use Illuminate\Http\Request;
 Route::get('/client', 'ApiController@getClientDetail');
 Route::delete('/client/document', 'ApiController@removeClientDocument');
 
+Route::post('/job', 'ApiController@createJob');
 Route::get('/jobs', 'ApiController@getJobs');
+Route::get('/jobsites', 'ApiController@getJobsites');
+Route::get('/supervisors', 'ApiController@getSupervisors');
 Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
 
 Route::get('/employees', 'ApiController@getEmployees');
