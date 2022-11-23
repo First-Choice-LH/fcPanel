@@ -36,6 +36,12 @@ class ApiController extends Controller
         return response()->json($client);
     }
 
+    public function removeClient(Request $request) {
+        Client::find($request->get('clientId'))->delete();
+
+        return response()->json('Company record deleted succcessfully!');
+    }
+
     public function getJobs(Request $request) {
 
         $jobs           = Job::where([]);

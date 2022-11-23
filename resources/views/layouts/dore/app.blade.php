@@ -26,9 +26,11 @@
     <link rel="stylesheet" href="{{ asset('dore/css/dore.light.blue.css') }}" />
 
     <link rel="stylesheet" href="{{ asset('dore/css/overrided.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/styles/metro/notify-metro.min.css" integrity="sha512-PlmS4kms+fh6ewjUlXryYw0t4gfyUBrab9UB0vqOojV26QKvUT9FqBJTRReoIZ7fO8p0W/U9WFSI4MAdI1Zm+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700,800,900|Open+Sans:300,400,600,700,800" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 </head>
 
 <body id="app-container" class="menu-default menu-sub-hidden sub-hidden">
@@ -168,7 +170,7 @@
                     <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
                 </div> -->
 
-              
+
             </div>
 
             <div class="user d-inline-block desktop-header">
@@ -360,7 +362,7 @@
                             <span>Jobsites</span>
                         </a>
                     </li>
-<!-- 
+<!--
                     <li class="@if(Request::is('supervisors/timesheets')) active @endif">
                         <a href="{{ url('/supervisors/timesheets/') }}">
                             <i class="iconsmind-Stopwatch"></i>
@@ -405,7 +407,7 @@
                     </li>
                     <li>
                         <a href="{{ url('supervisors/create') }}">
-                            <i class="simple-icon-user-follow"></i> Create Supervisor 
+                            <i class="simple-icon-user-follow"></i> Create Supervisor
                         </a>
                     </li>
                     <li>
@@ -443,7 +445,7 @@
                             <i class="simple-icon-plus"></i> Create Company
                         </a>
                     </li>
-                
+
                 </ul>
 
                 <ul class="list-unstyled" data-link="admin_jobsites">
@@ -516,9 +518,9 @@
     @endauth
 
     <main>
-        
+
         <div class="container-fluid">
-            
+
             @yield('content')
 
         </div>
@@ -543,6 +545,9 @@
     <script src="{{ asset('dore/js/vendor/mousetrap.min.js') }}"></script>
     <script src="{{ asset('dore/js/dore.script.js') }}"></script>
     <script src="{{ asset('dore/js/scripts.single.theme.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" integrity="sha512-57oZ/vW8ANMjR/KQ6Be9v/+/h6bq9/l3f0Oc7vn6qMqyhvPd1cvKBRWWpzu0QoneImqr2SkmO4MSqU+RpHom3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" integrity="sha512-efUTj3HdSPwWJ9gjfGR71X9cvsrthIA78/Fvd/IN+fttQVy7XWkOAXb295j8B3cmm/kFKVxjiNYzKw9IQJHIuQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
      @yield('script')
 

@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 // });
 
 Route::get('/client', 'ApiController@getClientDetail');
+Route::delete('/client', 'ApiController@removeClient');
 Route::delete('/client/document', 'ApiController@removeClientDocument');
 
 Route::post('/job', 'ApiController@createJob');

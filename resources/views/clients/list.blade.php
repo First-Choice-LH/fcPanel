@@ -23,12 +23,12 @@
                     <table class="table table-hover table-bordered sortable_table">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col" class="" width="10%">#</th>
+                                <th scope="col" class="" >#</th>
                                 <th scope="col" class="" data-col="company_name">Company</th>
                                 <th scope="col" class="" data-col="office_address">Address</th>
                                 <th scope="col" class="" data-col="office_phone">Phone</th>
                                 <th scope="col" class="" data-col="status">Status</th>
-                                <th scope="col" class="" width="10%">&nbsp;</th>
+                                <th scope="col" class="" >&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -49,6 +49,7 @@
                                 <td class="text-center">
                                     <button class="btn btnbg btn-sm btn-info" onclick="viewClientDetails({{ $row->id }})" title="View"><i class="fa fa-search"></i></button>
                                     <a class="btn btnbg btn-sm btn-info" href="{{ url('/clients/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" title="Delete"><i class="fa fa-trash"></i></a>
                                 </td>
 
                             </tr>
@@ -56,6 +57,26 @@
                         </tbody>
                       </table>
                         {{ $rows->appends(request()->except('page'))->links() }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="companyDeletionConfirmation" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-warning"></i> Deletion Confirmation</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this company record?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btnbg btn-sm" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btnbg btn-sm" onclick="deleteCompanyRecord()">Confirm</button>
                 </div>
             </div>
         </div>
@@ -151,6 +172,27 @@
             $('#companyPhone').text( data.office_phone);
         });
         $('#clientDetailsModal').modal('show');
+    }
+
+    var recordToDel;
+    function showDeletionConfirmation(clientId) {
+        recordToDel = clientId;
+        $('#companyDeletionConfirmation').modal('show');
+    }
+
+    function deleteCompanyRecord() {
+        $.ajax({
+            url: 'api/client',
+            type: 'DELETE',
+            success: function(response) {
+                $.notify(response, "success");
+                $('#companyDeletionConfirmation').modal('hide');
+                setTimeout(function() {
+                    window.location.href = window.location.href;
+                }, 1000);
+            },
+            data: {clientId: recordToDel}
+        });
     }
 </script>
 @endsection
