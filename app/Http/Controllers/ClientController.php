@@ -95,6 +95,7 @@ class ClientController extends Controller
             'postcode',
             'office_phone',
             'email',
+            'notes',
             'status'
         ];
 
@@ -111,36 +112,40 @@ class ClientController extends Controller
         }
 
         $existingDocuments = ClientDocument::where('client_id', $id)->pluck('id')->toArray();
-        foreach($request['document_file'] as $key => $document) {
 
-            if(isset($request['document_id'][$key])){
-                $doc = ClientDocument::find($request['document_id'][$key]);
-                if (($key2 = array_search($request['document_id'][$key], $existingDocuments)) !== false) {
-                    unset($existingDocuments[$key2]);
+        if(isset($request['document_file'])) {
+            foreach($request['document_file'] as $key => $document) {
+
+                if(isset($request['document_id'][$key])){
+                    $doc = ClientDocument::find($request['document_id'][$key]);
+                    if (($key2 = array_search($request['document_id'][$key], $existingDocuments)) !== false) {
+                        unset($existingDocuments[$key2]);
+                    }
+                }else{
+                    $doc = new ClientDocument;
                 }
-            }else{
-                $doc = new ClientDocument;
-            }
 
-            $file = $request['document_file'][$key];
+                $file = $request['document_file'][$key];
 
-            if($file) {
-                $fileName = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('/dore/client'), $fileName);
+                if($file) {
+                    $fileName = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
+                    $file->move(public_path('/dore/client'), $fileName);
 
-                if(!empty($doc->doc_name) && file_exists(public_path('/dore/client/'.$doc->doc_name)) ) {
-                    unlink(public_path('/dore/client/'.$doc->doc_name));
+                    if(!empty($doc->doc_name) && file_exists(public_path('/dore/client/'.$doc->doc_name)) ) {
+                        unlink(public_path('/dore/client/'.$doc->doc_name));
+                    }
+                }else{
+                    $fileName = isset($doc->doc_name) ? $doc->doc_name : '';
                 }
-            }else{
-                $fileName = isset($doc->doc_name) ? $doc->doc_name : '';
-            }
 
-            $doc->client_id     = $id;
-            $doc->doc_type_id   = $request['doc_type_id'][$key];
-            $doc->other_type    = $request['type_other'][$key];
-            $doc->doc_name      = $fileName;
-            $doc->save();
+                $doc->client_id     = $id;
+                $doc->doc_type_id   = $request['doc_type_id'][$key];
+                $doc->other_type    = $request['type_other'][$key];
+                $doc->doc_name      = $fileName;
+                $doc->save();
+            }
         }
+
 
         /*end*/
 

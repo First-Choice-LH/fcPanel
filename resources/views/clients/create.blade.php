@@ -77,6 +77,13 @@
 					<input type="text" class="form-control" name="email" aria-describedby="email" placeholder="Email" value="{{ old('email', (isset($row)) ? $row->email : '') }}"/>
 				</div>
             </div>
+            <div class="form-group row">
+				<div class="col-lg-8">
+					<label for="notes">Notes</label>
+					<input type="text" class="form-control" name="notes" aria-describedby="notes" placeholder="Enter notes" value="{{ old('notes', (isset($row)) ? $row->notes : '') }}"/>
+				</div>
+            </div>
+
             <div class="card padall30 mrb30">
                 <h4>Documents<hr class="hralignleft"/></h4>
                 <div class="audience-tab-content">

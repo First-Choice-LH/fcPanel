@@ -17,6 +17,7 @@ class Client extends Model{
 		'postcode',
         'office_phone',
         'email',
+        'notes',
         'status'
 	];
 

@@ -93,7 +93,7 @@
             </div>
             <div class="mx-4">
 
-                <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                <ul class="nav nav-tabs card-header-tabs ml-1" id="myTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active show" id="one-tab" data-toggle="tab" href="#detailsTab" role="tab" aria-controls="One" aria-selected="true">Details</a>
                     </li>
@@ -104,46 +104,48 @@
                         <a class="nav-link" id="three-tab" data-toggle="tab" href="#notesTab" role="tab" aria-controls="Three" aria-selected="false">Notes</a>
                     </li>
                 </ul>
-                <div class="tab-pane fade show active py-2" id="detailsTab" role="tabpanel" aria-labelledby="one-tab">
-                    <table class="table mt-2">
-                        <tbody>
-                            <tr>
-                                <td class="border-0">Status</td>
-                                <td class="border-0" id="companyStatus"></td>
-                            </tr>
-                            <tr>
-                                <td class="border-0">Last Updated</td>
-                                <td class="border-0" id="lastUpdated"></td>
-                            </tr>
-                            <tr>
-                                <td class="border-0" colspan="2"><h3>Company Details</h3></td>
-                            </tr>
-                            <tr>
-                                <td class="border-0">Address</td>
-                                <td class="border-0">
-                                    <i class="fa fa-map-marker" aria-hidden="true"></i> <span id="companyAddress"></span><br/>
-                                    <span id="companySuburb"></span> <span id="companyPostalCode"></span><br/>
-                                    <span id="companyState"></span> <span id="companyCountry"></span><br/>
-                                    <i class="fa fa-phone" aria-hidden="true"></i> <span id="companyPhone"></span><br/>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active py-2" id="detailsTab" role="tabpanel" aria-labelledby="one-tab">
+                        <table class="table mt-2">
+                            <tbody>
+                                <tr>
+                                    <td class="border-0">Status</td>
+                                    <td class="border-0" id="companyStatus"></td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0">Last Updated</td>
+                                    <td class="border-0" id="lastUpdated"></td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0" colspan="2"><h3>Company Details</h3></td>
+                                </tr>
+                                <tr>
+                                    <td class="border-0">Address</td>
+                                    <td class="border-0">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i> <span id="companyAddress"></span><br/>
+                                        <span id="companySuburb"></span> <span id="companyPostalCode"></span><br/>
+                                        <span id="companyState"></span> <span id="companyCountry"></span><br/>
+                                        <i class="fa fa-phone" aria-hidden="true"></i> <span id="companyPhone"></span><br/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade pt-4 pb-2" id="summaryTab" role="tabpanel" aria-labelledby="two-tab">
+                        <h5 class="card-title">Tab Card Two</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                    <div class="tab-pane fade pt-4 pb-2" id="notesTab" role="tabpanel" aria-labelledby="three-tab">
+                        <textarea class="form-control" id="companyNotes" rows="20" placeholder="Enter company notes"></textarea>
+                        <button class="btn btn-bg btn-sm" onclick="saveCompanyNotes()">Save Notes</button>
+                    </div>
                 </div>
-                <div class="tab-pane fade p-3" id="summaryTab" role="tabpanel" aria-labelledby="two-tab">
-                    <h5 class="card-title">Tab Card Two</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-                <div class="tab-pane fade p-3" id="notesTab" role="tabpanel" aria-labelledby="three-tab">
-                    <h5 class="card-title">Tab Card Three</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
+
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btnbg btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btnbg btn-sm" data-dismiss="modal">Close</button>
             </div>
             </div>
         </div>
@@ -155,7 +157,9 @@
 @section('script')
 <script type="text/javascript">
 
+    var focusedCompany = null;
     function viewClientDetails(clientId) {
+        focusedCompany = clientId;
         $.get("api/client",{id: clientId}, function(data, status) {
             if(data.status == 1) {
                 $('#companyStatus').text('Active').addClass('text-success');
@@ -170,6 +174,7 @@
             $('#companyState').text( data.state);
             $('#companyCountry').text( data.country);
             $('#companyPhone').text( data.office_phone);
+            $('#companyNotes').val( data.notes);
         });
         $('#clientDetailsModal').modal('show');
     }
@@ -178,6 +183,19 @@
     function showDeletionConfirmation(clientId) {
         recordToDel = clientId;
         $('#companyDeletionConfirmation').modal('show');
+    }
+
+    function saveCompanyNotes() {
+        $.post('api/client/notes', { clientId: focusedCompany, notes: $('#companyNotes').val() }, function(response) {
+            if(Array.isArray(response)) {
+                response.reverse();
+                for(let err of response) {
+                    $.notify(err);
+                }
+            } else {
+                $.notify(response, "success");
+            }
+        });
     }
 
     function deleteCompanyRecord() {

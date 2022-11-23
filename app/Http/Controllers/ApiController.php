@@ -42,6 +42,22 @@ class ApiController extends Controller
         return response()->json('Company record deleted succcessfully!');
     }
 
+    public function updateClientNotes(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'clientId'      => 'required',
+            'notes'         => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all());
+        }
+
+        Client::find($request->get('clientId'))->update(['notes' => $request->get('notes')]);
+
+        return response()->json('Company notes updated successfully!');
+    }
+
     public function getJobs(Request $request) {
 
         $jobs           = Job::where([]);
