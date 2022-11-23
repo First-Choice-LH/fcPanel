@@ -32,6 +32,14 @@
     .select2-selection__clear {
         margin-right: 9px;
     }
+    .select2-container .select2-selection--single {
+        height: 54px;
+        padding-left: 5px;
+        padding-top: 12px;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 12px;
+    }
 </style>
 
 <div class="page-header">
@@ -287,7 +295,7 @@
                         <div class="form-group row">
                             <div class="col-lg-6">
                                 <label for="address">Client</label>
-                                <select class="form-control" name="client_id" id="clientId">
+                                <select class="form-control select2" name="client_id" id="clientId">
                                     <option value="">-Select-</option>
                                     @foreach ($clients as $client)
                                     <option value="{{ $client->id }}" @if((isset($row) && $row->client->id == $client->id) || (\Request::post('client_id') == $client->id) )selected="selected"@endif>
@@ -313,7 +321,7 @@
                             </div>
                             <div class="col-lg-6">
                                 <label for="requestPosition">Position Requested</label>
-                                <select class="form-control" name="position_id">
+                                <select class="form-control select2" name="position_id">
                                     <option value="">Select</option>
                                     @foreach ($positions as $position)
                                         <option value="{{ $position->id }}">
@@ -521,7 +529,7 @@
                 </tr>`;
             }
 
-            setTimeout(() => initSelect2());
+            setTimeout(() => initEmployeeSearchSelect2());
 
             if(!markup) {
                 $(`#${namingPrefix}JobsNoResults`).removeClass('d-none');
@@ -591,6 +599,9 @@
         const addJobDate  = moment(dateString).format('YYYY-MM-DD');
         $('#startDate').val(addJobDate);
         $('#jobRequestModal').modal('show');
+        $('.select2').select2({
+            dropdownParent: $('#jobRequestModal')
+        });
     }
 
     function showAddEmployeePopup() {
@@ -598,7 +609,7 @@
         $('#addEmployeeModal').modal('show');
     }
 
-    function initSelect2() {
+    function initEmployeeSearchSelect2() {
         $('.employee-selection').select2({
             placeholder         : 'Select Employee',
             minimumInputLength  : 2,
