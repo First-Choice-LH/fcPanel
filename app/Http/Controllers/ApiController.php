@@ -92,6 +92,12 @@ class ApiController extends Controller
         return response()->json( $data );
     }
 
+    public function getJobDetail(Request $request) {
+        $job                    = Job::find($request->get('id'));
+        // $job->updated_at        = getUserFriendlyDateTime($job->updated_at);
+        return response()->json($job);
+    }
+
     public function getJobsites(Request $request) {
         $jobsites    = Jobsite::where('client_id', $request->get('clientId'))->get();
         return response()->json( $jobsites );

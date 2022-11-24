@@ -22,6 +22,7 @@ Route::delete('/client', 'ApiController@removeClient');
 Route::post('/client/notes', 'ApiController@updateClientNotes');
 Route::delete('/client/document', 'ApiController@removeClientDocument');
 
+Route::get('/job', 'ApiController@getJobDetail');
 Route::post('/job', 'ApiController@createJob');
 Route::get('/jobs', 'ApiController@getJobs');
 Route::get('/jobsites', 'ApiController@getJobsites');
