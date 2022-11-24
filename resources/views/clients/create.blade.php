@@ -300,7 +300,7 @@ function remove(docId, $elem) {
     if(confirm("Are you sure you want to delete file ?")){
         $.ajax({
             type:'DELETE',
-            url:'/api/client/document?' + $.param({
+            url: `${BASE_URL}/api/client/document?` + $.param({
                 "clientId"      : $('input[name="id"]').val(),
                 "docId"         : docId
             }),

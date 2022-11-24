@@ -455,7 +455,7 @@
             const startDate     = moment(info.start).format('YYYY-MM-DD');
             const endDate       = moment(info.end).format('YYYY-MM-DD');
 
-            $.get("/api/jobs", { startDate, endDate, calendarView: true }, function(response) {
+            $.get(`${BASE_URL}/api/jobs`, { startDate, endDate, calendarView: true }, function(response) {
                 let events = [];
                 for(let job of response) {
                     let title = job.status == 1 ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
@@ -474,7 +474,7 @@
         }
 
         function loadJobs(status, dated) {
-            $.get("/api/jobs", { status, dated : encodeURIComponent(dated)}, function(response) {
+            $.get(`${BASE_URL}/api/jobs`, { status, dated : encodeURIComponent(dated)}, function(response) {
                 populateJobs(status, response);
             });
         }

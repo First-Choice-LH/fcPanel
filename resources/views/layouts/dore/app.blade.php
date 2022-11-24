@@ -31,6 +31,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700,800,900|Open+Sans:300,400,600,700,800" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <script>
+        var BASE_URL    = "{{ url('/') }}";
+    </script>
 </head>
 
 <body id="app-container" class="menu-default menu-sub-hidden sub-hidden">

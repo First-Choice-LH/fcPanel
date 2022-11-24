@@ -160,7 +160,7 @@
     var focusedCompany = null;
     function viewClientDetails(clientId) {
         focusedCompany = clientId;
-        $.get("api/client",{id: clientId}, function(data, status) {
+        $.get(`${BASE_URL}/api/client`,{id: clientId}, function(data, status) {
             if(data.status == 1) {
                 $('#companyStatus').text('Active').addClass('text-success');
             } else {
@@ -186,7 +186,7 @@
     }
 
     function saveCompanyNotes() {
-        $.post('api/client/notes', { clientId: focusedCompany, notes: $('#companyNotes').val() }, function(response) {
+        $.post(`${BASE_URL}api/client/notes`, { clientId: focusedCompany, notes: $('#companyNotes').val() }, function(response) {
             if(Array.isArray(response)) {
                 response.reverse();
                 for(let err of response) {
@@ -200,7 +200,7 @@
 
     function deleteCompanyRecord() {
         $.ajax({
-            url: 'api/client',
+            url: `${BASE_URL}/api/client`,
             type: 'DELETE',
             success: function(response) {
                 $.notify(response, "success");

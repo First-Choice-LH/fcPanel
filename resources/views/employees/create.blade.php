@@ -596,7 +596,7 @@ function remove(elem){
         var id = $(elem).data("id");
         $.ajax({
                 type:'GET',
-                url:'/remove/'+id,
+                url: `${BASE_URL}/remove/${id}`,
                 success:function(result){
                 location.reload();
             }
