@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNotesToClientsTable extends Migration
+class AddFieldsToClientsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,9 @@ class AddNotesToClientsTable extends Migration
     public function up()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->mediumText('notes')->nullable();
+            $table->string('accounts_contact')->nullable()->after('email');
+            $table->string('accounts_email')->nullable()->after('accounts_contact');
+            $table->string('accounts_phone')->nullable()->after('accounts_email');
         });
     }
 
@@ -26,7 +28,9 @@ class AddNotesToClientsTable extends Migration
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->dropColumn('notes');
+            $table->dropColumn('accounts_contact');
+            $table->dropColumn('accounts_email');
+            $table->dropColumn('accounts_phone');
         });
     }
 }

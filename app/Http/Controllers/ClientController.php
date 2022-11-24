@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Client;
 use App\ClientDocType;
 use App\ClientDocument;
+use App\ClientPositionRate;
+use App\Position;
 use Carbon\Carbon;
 
 class ClientController extends Controller
@@ -66,6 +68,21 @@ class ClientController extends Controller
         $data['documentTypes']  = ClientDocType::all();
         $data['row']            = $this->client->show($id);
         $data['documents']      = ClientDocument::where('client_id',$id)->get();
+        $positions              = Position::where('status', 1)->get();
+        $data['positions']      = [];
+        foreach($positions as $position) {
+            $data['positions'][] = [
+                'id'            => $position->id,
+                'label'         => $position->title
+            ];
+        }
+
+        $data['positions']      = json_encode($data['positions']);
+
+        $data['positionRates']  = ClientPositionRate::where('client_id', $id)->with('position')->get()->toArray();
+
+        $data['positionRates']  = json_encode($data['positionRates']);
+
         return view('clients.create', $data);
     }
 
@@ -95,11 +112,17 @@ class ClientController extends Controller
             'postcode',
             'office_phone',
             'email',
-            'notes',
+            'accounts_contact',
+            'accounts_email',
+            'accounts_phone',
             'status'
         ];
 
         $client_row                     = $request->only($fields);
+
+        $rateFields     = $request->only('position_id', 'charge_rate');
+
+
         // $client_row['document']         = $documentName;
 
         $client_row['user_id'] = $id;//$new_user->id;
@@ -110,6 +133,20 @@ class ClientController extends Controller
         }else{
             $this->client->update($client_row, $id);
         }
+
+        // Delete previous entries, add new ones
+        ClientPositionRate::where('client_id', $id)->delete();
+
+        foreach($rateFields['position_id'] as $index => $value) {
+            if(!$value) continue;
+
+            ClientPositionRate::create([
+                'client_id'     => $id,
+                'position_id'   => $value,
+                'rate'          => $rateFields['charge_rate'][$index]
+            ]);
+        }
+
 
         $existingDocuments = ClientDocument::where('client_id', $id)->pluck('id')->toArray();
 

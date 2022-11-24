@@ -34,7 +34,9 @@
                         <tbody>
                             @foreach($rows as $row)
                             <tr>
-                                <td class="">{{ $i++ }}</td>
+                                <td class="">{{ $i++ }}
+                                    <button class="btn btnbg btn-sm btn-info ml-2" onclick="viewClientDetails({{ $row->id }})" title="View"><i class="fa fa-eye"></i></button>
+                                </td>
                                 <td class="">{{ $row->company_name }}</td>
                                 <td class="">{{ $row->office_address }}</td>
                                 <td class="">{{ $row->office_phone }}</td>
@@ -47,7 +49,6 @@
                                     }?>
                                 </td>
                                 <td class="text-center">
-                                    <button class="btn btnbg btn-sm btn-info" onclick="viewClientDetails({{ $row->id }})" title="View"><i class="fa fa-search"></i></button>
                                     <a class="btn btnbg btn-sm btn-info" href="{{ url('/clients/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
                                     <a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" title="Delete"><i class="fa fa-trash"></i></a>
                                 </td>
@@ -95,17 +96,23 @@
 
                 <ul class="nav nav-tabs card-header-tabs ml-1" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active show" id="one-tab" data-toggle="tab" href="#detailsTab" role="tab" aria-controls="One" aria-selected="true">Details</a>
+                        <a class="nav-link active show" id="details-tab" data-toggle="tab" href="#detailsTab" role="tab" aria-controls="details" aria-selected="true">Details</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="two-tab" data-toggle="tab" href="#summaryTab" role="tab" aria-controls="Two" aria-selected="false">Summary</a>
+                        <a class="nav-link" id="summary-tab" data-toggle="tab" href="#summaryTab" role="tab" aria-controls="summary" aria-selected="false">Summary</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="three-tab" data-toggle="tab" href="#notesTab" role="tab" aria-controls="Three" aria-selected="false">Notes</a>
+                        <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notesTab" role="tab" aria-controls="notes" aria-selected="false">Notes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="docs-tab" data-toggle="tab" href="#docsTab" role="tab" aria-controls="docs" aria-selected="false">Documents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="rates-tab" data-toggle="tab" href="#ratesTab" role="tab" aria-controls="rates" aria-selected="false">Charge Rates</a>
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane fade show active py-2" id="detailsTab" role="tabpanel" aria-labelledby="one-tab">
+                    <div class="tab-pane fade show active py-2" id="detailsTab" role="tabpanel" aria-labelledby="details-tab">
                         <table class="table mt-2">
                             <tbody>
                                 <tr>
@@ -131,14 +138,20 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="tab-pane fade pt-4 pb-2" id="summaryTab" role="tabpanel" aria-labelledby="two-tab">
+                    <div class="tab-pane fade pt-4 pb-2" id="summaryTab" role="tabpanel" aria-labelledby="summary-tab">
                         <h5 class="card-title">Tab Card Two</h5>
                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                         <a href="#" class="btn btn-primary">Go somewhere</a>
                     </div>
-                    <div class="tab-pane fade pt-4 pb-2" id="notesTab" role="tabpanel" aria-labelledby="three-tab">
+                    <div class="tab-pane fade pt-4 pb-2" id="notesTab" role="tabpanel" aria-labelledby="notes-tab">
                         <textarea class="form-control" id="companyNotes" rows="20" placeholder="Enter company notes"></textarea>
                         <button class="btn btn-bg btn-sm" onclick="saveCompanyNotes()">Save Notes</button>
+                    </div>
+                    <div class="tab-pane fade pt-4 pb-2" id="docsTab" role="tabpanel" aria-labelledby="docs-tab">
+                    </div>
+                    <div class="tab-pane fade pt-4 pb-2" id="ratesTab" role="tabpanel" aria-labelledby="rates-tab">
+                        <table id="ratesTable" class="table table-bordered">
+                        </table>
                     </div>
                 </div>
 
@@ -175,6 +188,20 @@
             $('#companyCountry').text( data.country);
             $('#companyPhone').text( data.office_phone);
             $('#companyNotes').val( data.notes);
+
+            let chargeRateRows = '';
+            if( data.position_rates ) {
+                for(let rate of data.position_rates) {
+                    chargeRateRows += `<tr>
+                        <td>${rate.position.title}</td>
+                        <td>$${rate.rate}</td>
+                    </tr>`;
+                }
+            }
+
+            $('#ratesTable').html(chargeRateRows);
+
+
         });
         $('#clientDetailsModal').modal('show');
     }

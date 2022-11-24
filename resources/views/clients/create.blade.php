@@ -29,7 +29,7 @@
 			<form role="form" method="post" action="{{ route('clients.save') }}" class="card-body" enctype="multipart/form-data">
 				{{ csrf_field() }}
 				<input type="hidden" name="id" value="{{ old('id', (isset($row)) ? $row->id : null) }}"/>
-
+                <h4>Company Information<hr class="hralignleft"/></h4>
 				<div class="form-group row">
 					<div class="col-lg-8">
 						<label for="company_name">Company Name</label>
@@ -77,11 +77,36 @@
 					<input type="text" class="form-control" name="email" aria-describedby="email" placeholder="Email" value="{{ old('email', (isset($row)) ? $row->email : '') }}"/>
 				</div>
             </div>
+            <hr/>
             <div class="form-group row">
-				<div class="col-lg-8">
-					<label for="notes">Notes</label>
-					<input type="text" class="form-control" name="notes" aria-describedby="notes" placeholder="Enter notes" value="{{ old('notes', (isset($row)) ? $row->notes : '') }}"/>
-				</div>
+                <div class="col-lg-4">
+                    <label for="accounts_contact">Accounts Contact</label>
+                    <input type="text" class="form-control" name="accounts_contact" aria-describedby="accounts_contact" placeholder="Accounts Contact" value="{{ old('accounts_contact', (isset($row)) ? $row->accounts_contact : '') }}"/>
+                </div>
+                <div class="col-lg-4">
+                    <label for="accounts_email">Accounts Email</label>
+                    <input type="text" class="form-control" name="accounts_email" aria-describedby="accounts_email" placeholder="Accounts Email" value="{{ old('accounts_email', (isset($row)) ? $row->accounts_email : '') }}"/>
+                </div>
+                <div class="col-lg-4">
+                    <label for="accounts_phone">Accounts Phone</label>
+                    <input type="text" class="form-control" name="accounts_phone" aria-describedby="accounts_phone" placeholder="Accounts Phone" value="{{ old('accounts_phone', (isset($row)) ? $row->accounts_phone : '') }}"/>
+                </div>
+            </div>
+
+            <div class="card padall30 mrb30">
+                <h4>Charge Rates<hr class="hralignleft"/></h4>
+                <div id="rateContainer">
+
+                </div>
+            </div>
+
+            <div class="card padall30 mrb30">
+                <h4>Notes<hr class="hralignleft"/></h4>
+                <div class="form-group row">
+                    <div class="col-lg-8">
+                        <input type="text" class="form-control" name="notes" aria-describedby="notes" placeholder="Enter notes" value="{{ old('notes', (isset($row)) ? $row->notes : '') }}"/>
+                    </div>
+                </div>
             </div>
 
             <div class="card padall30 mrb30">
@@ -190,6 +215,21 @@
 
 
     <div style="display: none;">
+
+        <div class="row rates-row cloneable">
+            <div class="col-lg-4 position-input-col">
+                <input type="text" class="form-control position-search" placeholder="Position" value="" />
+                <input type="hidden" class="form-control" placeholder="Position" name="position_id[]" value="" />
+            </div>
+            <div class="col-lg-2 rate-input-col">
+                <input type="number" class="form-control" name="charge_rate[]" placeholder="$" value="45" />
+            </div>
+        </div>
+        <div class="col-lg-2 add-more-rate-col cloneable">
+            <button type="button" class="btn btnbg btn-sm mt-2" onclick="addNewRateRow()"><i class="fa fa-plus text-white" role="button"></i></button>
+        </div>
+        <button type="button" class="remove-rate-row-btn cloneable btn btnbg btn-sm mt-2" onclick="removeRateRow()"><i class="fa fa-minus text-white" role="button"></i></button>
+
         <div class="clone_document document_row">
             <div class="form-group row">
                 <div class="col-lg-12 text-right">
@@ -321,10 +361,70 @@ function remove(docId, $elem) {
     }
 }
 
+// Add a new row to rate container element and set the autocomplete on that row
+function addNewRateRow(rate = null) {
+
+    $('#rateContainer .rates-row').find('.add-more-rate-col').remove();
+
+    var ratesRow = $('.rates-row.cloneable').clone();
+    ratesRow.removeClass('cloneable');
+
+    let actionBtns    = getRateRowActionBtns();
+    ratesRow.append(actionBtns);
+
+    $('#rateContainer').append( ratesRow );
+
+    let positions = JSON.parse('{!! ($positions) !!}');
+    // Set default values gracefully
+    if(rate) {
+        $(ratesRow).find('input[name="charge_rate[]"]').val(rate.rate);
+        $(ratesRow).find('input').first().val(rate.position.title);
+        $(ratesRow).find('input[name="position_id[]"]').val(rate.position_id);
+    }
+
+    $('#rateContainer .rates-row').last().find('.position-search').autocomplete({
+        source: positions,
+        select: function (event, ui) {
+            $(this).next('input[type="hidden"]').val( ui.item.id );
+        }
+    });
+}
+
+// This function decides which buttons are required for current state/number of rows on rates section
+function getRateRowActionBtns(countCheck = 0) {
+    var addMoreCol = $('.add-more-rate-col').clone();
+    addMoreCol.removeClass('cloneable');
+
+    if($('#rateContainer .rates-row').length > countCheck) {
+        var removeBtn = $('.remove-rate-row-btn').clone();
+        removeBtn.removeClass('cloneable');
+        $(addMoreCol).append(removeBtn);
+    }
+
+    return addMoreCol;
+}
+
+// This function removes the clicked button row and moves the button to previous row
+function removeRateRow() {
+    $('#rateContainer .rates-row').last().remove();
+    let actionBtns = getRateRowActionBtns(1);
+    $('#rateContainer .rates-row').last().append( actionBtns );
+}
+
 $(document).ready(function(){
     $('.document_type').each(function(){
         $(this).trigger('change');
     });
+
+    var positionRates = JSON.parse('{!! ($positionRates) !!}');
+
+    for(let rate of positionRates) {
+        addNewRateRow(rate);
+    }
+
+    if(!positionRates.length) addNewRateRow();
+
+
 });
 
 $('.add-more-audience').click(function(){
@@ -352,6 +452,8 @@ $('body').on('change', '.document_type', function() {
         $(this).closest('.form-group').find('.other_col').hide();
     }
 });
+
+
 </script>
 
 @endsection

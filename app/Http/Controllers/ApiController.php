@@ -11,6 +11,7 @@ use App\Job;
 use App\Employee;
 use App\ClientDocument;
 use App\Jobsite;
+use App\ClientPositionRate;
 use App\Supervisor;
 use DB;
 use Auth;
@@ -32,6 +33,9 @@ class ApiController extends Controller
 
     public function getClientDetail(Request $request) {
         $client                 = Client::find($request->get('id'));
+        $positionRates          = ClientPositionRate::where('client_id', $request->get('id'))->with('position')->get();
+
+        $client->position_rates = $positionRates;
         $client->last_updated   = getUserFriendlyDateTime($client->updated_at);
         return response()->json($client);
     }

@@ -17,7 +17,9 @@ class Client extends Model{
 		'postcode',
         'office_phone',
         'email',
-        'notes',
+        'accounts_contact',
+        'accounts_email',
+        'accounts_phone',
         'status'
 	];
 
@@ -36,4 +38,7 @@ class Client extends Model{
 		return $this->hasMany('\App\Employee');
 	}
 
+    function chargeRates() {
+        return $this->hasMany('\App\ClientPositionRate');
+    }
 }
