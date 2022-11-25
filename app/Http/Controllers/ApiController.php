@@ -57,9 +57,9 @@ class ApiController extends Controller
     }
 
     public function removeClient(Request $request) {
-        DB::beginTransaction();
+        // DB::beginTransaction();
         Client::find($request->get('clientId'))->delete();
-        ClientDocument::where('client_id', $request->get('clientId'))
+        // ClientDocument::where('client_id', $request->get('clientId'));
         return response()->json('Company record deleted succcessfully!');
     }
 
