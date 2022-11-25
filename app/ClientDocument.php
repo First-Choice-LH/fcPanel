@@ -14,4 +14,9 @@ class ClientDocument extends Model
     protected $fillable = [
         'client_id', 'doc_type_id', 'other_type', 'doc_name', 'status'
     ];
+
+    public function docType()
+	{
+		return $this->hasOne('\App\ClientDocType', 'id', 'doc_type_id');
+	}
 }

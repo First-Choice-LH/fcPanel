@@ -67,6 +67,8 @@ Route::get('/changepassword', 'DashboardController@change_password')->name('chan
 Route::post('/changepassword', 'DashboardController@post_change_password')->name('savechangepassword');
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/download', 'HomeController@getDownload');
+
 Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Route::get('/test', 'ActivityController@test');

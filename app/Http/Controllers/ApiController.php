@@ -33,7 +33,7 @@ class ApiController extends Controller
     }
 
     public function getClientDetail(Request $request) {
-        $client                 = Client::find($request->get('id'));
+        $client                 = Client::with('jobsites', 'supervisors.jobsites', 'documents.docType')->find($request->get('id'));
         $positionRates          = ClientPositionRate::where('client_id', $request->get('id'))->with('position')->get();
 
         $client->position_rates = $positionRates;
@@ -57,8 +57,9 @@ class ApiController extends Controller
     }
 
     public function removeClient(Request $request) {
+        DB::beginTransaction();
         Client::find($request->get('clientId'))->delete();
-
+        ClientDocument::where('client_id', $request->get('clientId'))
         return response()->json('Company record deleted succcessfully!');
     }
 

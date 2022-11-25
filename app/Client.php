@@ -28,7 +28,7 @@ class Client extends Model{
 		return $this->hasMany('\App\Jobsite');
 	}
 
-	public function supervisor()
+	public function supervisors()
 	{
 		return $this->hasMany('\App\Supervisor');
 	}
@@ -36,6 +36,11 @@ class Client extends Model{
 	public function employees()
 	{
 		return $this->hasMany('\App\Employee');
+	}
+
+    public function documents()
+	{
+		return $this->hasMany('\App\ClientDocument');
 	}
 
     function chargeRates() {

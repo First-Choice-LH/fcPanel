@@ -25,4 +25,18 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function getDownload(Request $request)
+    {
+        //PDF file is stored under project/public/download/info.pdf
+        $file= $request->get('path');
+        if(!$file) return;
+
+        $headers = array(
+            'Content-Type: application/pdf',
+        );
+        $tempArr    = \explode('/', $file);
+        $filename   = \end( $tempArr );
+        return response()->download($file, $filename, $headers);
+    }
 }
