@@ -144,8 +144,7 @@
                         <a href="#" class="btn btn-primary">Go somewhere</a>
                     </div>
                     <div class="tab-pane fade pt-4 pb-2" id="notesTab" role="tabpanel" aria-labelledby="notes-tab">
-                        <textarea class="form-control" id="companyNotes" rows="20" placeholder="Enter company notes"></textarea>
-                        <button class="btn btn-bg btn-sm" onclick="saveCompanyNotes()">Save Notes</button>
+                        <table class="table" id="notesTable"></table>
                     </div>
                     <div class="tab-pane fade pt-4 pb-2" id="docsTab" role="tabpanel" aria-labelledby="docs-tab">
                     </div>
@@ -189,6 +188,7 @@
             $('#companyPhone').text( data.office_phone);
             $('#companyNotes').val( data.notes);
 
+            // Populate Charge Rates
             let chargeRateRows = '';
             if( data.position_rates ) {
                 for(let rate of data.position_rates) {
@@ -201,6 +201,21 @@
 
             $('#ratesTable').html(chargeRateRows);
 
+            // Populate Notes
+            let notes = '';
+            if( data.notes ) {
+                for(let note of data.notes) {
+                    notes += `<tr>
+                            <td>${note.user}</td>
+                            <td>${note.created_at}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&quot;${note.note}&quot;</td>
+                        </tr>`;
+                }
+            }
+
+            $('#notesTable').html(notes);
 
         });
         $('#clientDetailsModal').modal('show');

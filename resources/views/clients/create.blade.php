@@ -95,18 +95,35 @@
 
             <div class="card padall30 mrb30">
                 <h4>Charge Rates<hr class="hralignleft"/></h4>
-                <div id="rateContainer">
-
-                </div>
+                <div id="rateContainer"></div>
             </div>
 
             <div class="card padall30 mrb30">
                 <h4>Notes<hr class="hralignleft"/></h4>
                 <div class="form-group row">
                     <div class="col-lg-8">
-                        <input type="text" class="form-control" name="notes" aria-describedby="notes" placeholder="Enter notes" value="{{ old('notes', (isset($row)) ? $row->notes : '') }}"/>
+                        <input type="text" class="form-control" name="notes" aria-describedby="notes" placeholder="Enter new notes" />
                     </div>
                 </div>
+
+                @if(count($notes))
+                <div class="row" >
+                    <div class="col-lg-8">
+                        <table class="table">
+                            @foreach($notes as $note)
+                            <tr>
+                                <td>{{ $note->userInfo->name }}</td>
+                                <td>{{ getUserFriendlyDateTime($note->created_at) }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">&quot;{{ $note->note }}&quot;</td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
+                @endif
+
             </div>
 
             <div class="card padall30 mrb30">
@@ -316,6 +333,7 @@
 @section('script')
 
 <script type="text/javascript">
+
 function setStatus(me, idName, value){
 	if(value == 0){
 		$(me).parent().find('button:eq(0)').removeClass('red-invert-btn');
@@ -390,6 +408,7 @@ function addNewRateRow(rate = null) {
     });
 }
 
+
 // This function decides which buttons are required for current state/number of rows on rates section
 function getRateRowActionBtns(countCheck = 0) {
     var addMoreCol = $('.add-more-rate-col').clone();
@@ -410,6 +429,7 @@ function removeRateRow() {
     let actionBtns = getRateRowActionBtns(1);
     $('#rateContainer .rates-row').last().append( actionBtns );
 }
+
 
 $(document).ready(function(){
     $('.document_type').each(function(){

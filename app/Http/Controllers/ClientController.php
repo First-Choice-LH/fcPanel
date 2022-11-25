@@ -17,6 +17,7 @@ use App\Client;
 use App\ClientDocType;
 use App\ClientDocument;
 use App\ClientPositionRate;
+use App\ClientNote;
 use App\Position;
 use Carbon\Carbon;
 
@@ -80,6 +81,7 @@ class ClientController extends Controller
         $data['positions']      = json_encode($data['positions']);
 
         $data['positionRates']  = ClientPositionRate::where('client_id', $id)->with('position')->get()->toArray();
+        $data['notes']          = ClientNote::where('client_id', $id)->with('userInfo')->orderBy('created_at', 'DESC')->get();
 
         $data['positionRates']  = json_encode($data['positionRates']);
 
@@ -147,6 +149,14 @@ class ClientController extends Controller
             ]);
         }
 
+        // Save note if any
+        if( $request->get('notes') ) {
+            ClientNote::create([
+                'client_id'     => $id,
+                'note'          => $request->get('notes'),
+                'added_by'      => Auth::user()->id
+            ]);
+        }
 
         $existingDocuments = ClientDocument::where('client_id', $id)->pluck('id')->toArray();
 

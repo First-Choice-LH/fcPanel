@@ -13,6 +13,7 @@ use App\ClientDocument;
 use App\Jobsite;
 use App\ClientPositionRate;
 use App\Supervisor;
+use App\ClientNote;
 use DB;
 use Auth;
 
@@ -36,6 +37,21 @@ class ApiController extends Controller
         $positionRates          = ClientPositionRate::where('client_id', $request->get('id'))->with('position')->get();
 
         $client->position_rates = $positionRates;
+
+        $notes                  = ClientNote::where('client_id', $request->get('id'))->with('userInfo')->get();
+        $formattedNotes         = [];
+
+        foreach($notes as $note) {
+            $formattedNotes[]   = [
+                'id'        => $note->id,
+                'note'      => $note->note,
+                'user'      => $note->userInfo->name,
+                'created_at'=> getUserFriendlyDateTime($note->created_at),
+            ];
+        }
+
+        $client->notes          = $formattedNotes;
+
         $client->last_updated   = getUserFriendlyDateTime($client->updated_at);
         return response()->json($client);
     }

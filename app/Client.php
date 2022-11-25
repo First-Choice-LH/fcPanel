@@ -41,4 +41,8 @@ class Client extends Model{
     function chargeRates() {
         return $this->hasMany('\App\ClientPositionRate');
     }
+
+    function notes() {
+        return $this->hasMany('\App\ClientNote');
+    }
 }
