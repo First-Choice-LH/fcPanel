@@ -37,7 +37,7 @@
                         <!--label for="username" class="col-sm-4 col-form-label text-md-right">{{ __('Username') }}</label-->
 
                         <div class="col-md-12">
-                            <input id="username" type="text" class="form-control form-control_w{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" placeholder="EMAIL / USERNAME" required autofocus>
+                            <input id="username" type="text" class="form-control form-control_w{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" placeholder="USERNAME" required autofocus>
 
                             @if ($errors->has('username'))
                                 <span class="invalid-feedback" role="alert">
@@ -77,12 +77,12 @@
                             </a>
                         </div>
                     </div>
-                    <div class="form-group row desktop_row">
+                    <!-- <div class="form-group row desktop_row">
                         <div class="col-md-8 text-left">
                             <a class="btn btnbg btn-primary" href="/employee/create">{{ __('CREATE ACCOUNT') }}</a>
-                        </div>
+                        </div> -->
                         
-                        <div class="col-md-4 text-right">
+                        <div class="col-md-12 text-right">
                             <button type="submit" id="login_btn" class="btn btnbg btn-primary">
                                 {{ __('Login') }}
                             </button>
@@ -94,18 +94,18 @@
                                 {{ __('Login') }}
                             </button>
                         </div> 
-                        <div class="col-md-12 text-center">
+                        <!-- <div class="col-md-12 text-center">
                             <a class="btn btnbg btn-primary" href="/employee/create">{{ __('CREATE ACCOUNT') }}</a>
                         </div>                   
-                    </div>
+                    </div> -->
 
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                          <div class="col-md-12 text-center">
                             <h3 style="margin: 10px 0;">OR LOGIN WITH</h3>
                          </div>
-                    </div>
+                    </div> -->
 
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                        <div class="col-md-12 text-center social_btn">
                            <a href="/login/facebook" class="btn btnbg" style="background: #3B5998; color: white; text-align: center; padding: 10px 15px;">
                                <i class="fab fa-facebook-f" style="font-size: 20px;"></i>
@@ -115,7 +115,7 @@
                            </a>
                        </div>
                        
-                   </div>
+                   </div> -->
                     
 
                     <!--div class="form-group row mb-0">

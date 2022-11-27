@@ -242,24 +242,24 @@
 
                     <li class="@if(Request::is('dashboard')) active @endif">
                         <a href="{{ url('/dashboard/') }}">
-                            <i class="iconsmind-Shop"></i>
-                            <span>Dashboard</span>
+                            <i class="iconsmind-Calendar-4"></i>
+                            <span>Calendar</span>
                         </a>
                     </li>
 
                     <li class="@if(Request::is('activity')) active @endif">
                        <a href="{{ url('/activity/') }}">
-                           <i class="iconsmind-Administrator"></i>
-                           <span>Activity</span>
+                           <i class="iconsmind-Warning-Window"></i>
+                           <span>Alerts</span>
                        </a>
                     </li>
-
+<!-- 
                     <li class="@if(Request::is('timesheets')) active @endif">
                         <a href="{{ url('/timesheets/') }}">
                             <i class="iconsmind-Stopwatch"></i>
                             <span>Timesheets</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li class="@if(Request::is('clients')) active @endif @if(Request::is('clients/*')) active @endif">
                         <a href="{{ url('/clients/') }}">
@@ -267,10 +267,17 @@
                             <span>Companies</span>
                         </a>
                     </li>
+                    
+                    <li class="@if(Request::is('employees')) active @endif @if(Request::is('employees/*')) active @endif @if(strpos(Request::fullUrl(), 'employee') !== false) active @endif">
+                        <a href="{{ url('/employees/') }}">
+                            <i class="iconsmind-Worker"></i>
+                            <span>Employees</span>
+                        </a>
+                    </li>
 
                     <li class="@if(Request::is('jobsites')) active @endif @if(Request::is('jobsites/*')) active @endif">
                         <a href="{{ url('/jobsites/') }}">
-                            <i class="iconsmind-Map"></i>
+                            <i class="iconsmind-Building"></i>
                             <span>Jobsites</span>
                         </a>
                     </li>
@@ -284,24 +291,19 @@
 
                     <li class="@if(Request::is('positions')) active @endif @if(Request::is('positions/*')) active @endif">
                         <a href="{{ url('/positions/') }}">
-                            <i class="iconsmind-Map-Marker"></i>
+                            <i class="iconsmind-Crane"></i>
                             <span>Positions</span>
                         </a>
                     </li>
 
-                    <li class="@if(Request::is('employees')) active @endif @if(Request::is('employees/*')) active @endif @if(strpos(Request::fullUrl(), 'employee') !== false) active @endif">
-                        <a href="{{ url('/employees/') }}">
-                            <i class="iconsmind-Administrator"></i>
-                            <span>Employees</span>
-                        </a>
-                    </li>
 
-                     <li class="@if(Request::is('requests')) active @endif @if(Request::is('requests/*')) active @endif">
+
+                     <!-- <li class="@if(Request::is('requests')) active @endif @if(Request::is('requests/*')) active @endif">
                         <a href="{{ url('/requests/') }}">
                             <i class="iconsmind-Administrator"></i>
                             <span>Jobsite Requests</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     @endhasrole
 

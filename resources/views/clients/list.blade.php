@@ -41,24 +41,25 @@
         <?php $i = 1; ?>
         <div class="mytable">
             <div class="row">
-                <div class="col-lg-12 table-responsive">
+                <div class="col-lg-12 table-responsive container">
                     <table class="table table-hover table-bordered sortable_table">
-                        <thead class="thead-dark">
+                        <thead class="thead-dark dnd-moved">
                             <tr>
-                                <th scope="col" class="" >#</th>
+                                <th scope="col" class="text-center" width="10%" >Quick</th>
                                 <th scope="col" class="" data-col="company_name">Company</th>
                                 <th scope="col" class="" data-col="office_address">Address</th>
                                 <th scope="col" class="" data-col="office_phone">Phone</th>
                                 <th scope="col" class="" data-col="status">Status</th>
-                                <th scope="col" class="" >&nbsp;</th>
+                                <th scope="col" class="text-center" >Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($rows as $row)
                             <tr>
-                                <td class="">{{ $i++ }}
-                                    <button class="btn btnbg btn-sm btn-info ml-2" onclick="viewClientDetails({{ $row->id }})" title="View"><i class="fa fa-eye"></i></button>
-                                </td>
+                                    <th class="text-center">
+                                    <!-- {{ $i++ }} -->
+                                    <button class="btn btnbg btn-sm btn-info ml-2 " onclick="viewClientDetails({{ $row->id }})" title="View"><i class="fa fa-search-plus"></i></button>
+                                </th>
                                 <td class="">{{ $row->company_name }}</td>
                                 <td class="">{{ $row->office_address }}</td>
                                 <td class="">{{ $row->office_phone }}</td>
@@ -84,7 +85,11 @@
             </div>
         </div>
     </div>
-
+    <script src="js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    <script src="js/dragndrop.table.columns.js" type="text/javascript"></script>
+    <script>
+        $('.table').dragableColumns();
+    </script>
     <div class="modal fade" id="companyDeletionConfirmation" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -346,7 +351,7 @@
                 for(let doc of data.documents) {
                     documents += `<tr>
                         <td>${doc.doc_type.type}</td>
-                        <td><button class="btn btnbg btn-sm" onclick="viewDocument('${doc.doc_name}')"><i class="fa fa-eye"></i> View</button></td>
+                        <td><button class="btn btnbg btn-sm" onclick="viewDocument('${doc.doc_name}')"><i class="fa fa-search-plus"></i> View</button></td>
                         <td><a class="btn btnbg btn-sm" href="${BASE_URL}/download?path=dore/client/${doc.doc_name}"><i class="fa fa-download"></i> Download</a></td>
                     </tr>`;
                 }

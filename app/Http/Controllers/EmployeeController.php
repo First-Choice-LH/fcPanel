@@ -182,7 +182,7 @@ class EmployeeController extends Controller
             $new_employee = $this->employee->create($employee_row);
             $this->employee->attach($new_employee->id, $jobsite_id);
             $emp_id = $new_employee->id;
-            $message = "created by Admin";
+            $message = "created an Employee";
             $type = EMP_PROFILE;
             activity(Auth::id(),$message,$type,$emp_id,NULL,NULL,NULL);
 

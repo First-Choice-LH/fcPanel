@@ -33,7 +33,7 @@
 					  		<tr>
 					  			<td class="d-none d-md-table-cell d-lg-table-cell">{{ $i++ }}</td>
 					  			<td class="">{{ $row->title }}</td>
-					  			<td class="text-center"><a class="btn btnbg btn-sm btn-success" href="{{ url('/positions/update/'.$row->id) }}">EDIT</a></td>
+					  			<td class="text-center"><a class="btn btnbg btn-sm btn-info" href="{{ url('/positions/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a></td>
 				  			</tr>
 				  			@endforeach
 					  	</tbody>

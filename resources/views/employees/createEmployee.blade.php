@@ -271,14 +271,14 @@
                                            <label for="image">Upload Photo Front</label>
                                            <input type="File" class="form-control" name="license_image_front[]" aria-describedby="image" placeholder="Image" value=""/>
                                            @if($lic->license_image_front != '')
-                                           <button type="button" class="btn btnbg image-preview" data-src="{{ $lic->license_image_front }}"><i class="fa fa-eye"></i></button>
+                                           <button type="button" class="btn btnbg image-preview" data-src="{{ $lic->license_image_front }}"><i class="fa fa-search-plus"></i></button>
                                            @endif
                                        </div>
                                        <div class="col-lg-6">
                                            <label for="image">Upload Photo End</label>
                                            <input type="File" class="form-control" name="license_image_back[]" aria-describedby="image" placeholder="Image" value=""/>
                                            @if($lic->license_image_back != '')
-                                           <button type="button" class="btn btnbg image-preview" data-src="{{ $lic->license_image_back }}"><i class="fa fa-eye"></i></button>
+                                           <button type="button" class="btn btnbg image-preview" data-src="{{ $lic->license_image_back }}"><i class="fa fa-search-plus"></i></button>
                                             @endif
                                        </div>
                                    </div>

@@ -39,13 +39,13 @@
     }
 </style>
 
-<div class="page-header">
+<!-- <div class="page-header">
 	<div class="row">
 		<div class="col-lg-12">
-			<h1>Dashboard</h1>
+			<h1>Calendar</h1>
 			<hr>
 		</div>
-	</div>
+	</div> -->
     <div class="main_dashboard_page">
 	{{-- <div class="row">
 		<div class="col-lg-4">
@@ -245,7 +245,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <table class="table table-hover table-bordered table-responsive-md">
+                    <table class="table table-hover table-bordered table-responsive-md text-center">
                         <thead>
                             <tr>
                                 <th>Client</th>

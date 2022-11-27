@@ -162,7 +162,7 @@
                                     </div>
                                     @if($doc->doc_name != '')
                                     <div class="col-lg-1 pl-0 mt-4">
-                                         <button type="button" class="btn btnbg file-preview" data-src="{{ $doc->doc_name }}"><i class="fa fa-eye"></i></button>
+                                         <button type="button" class="btn btnbg file-preview" data-src="{{ $doc->doc_name }}"><i class="fa fa-search-plus"></i></button>
                                     </div>
                                     @endif
                                     <div class="col-lg-6 other_col">
@@ -333,6 +333,11 @@
 @section('script')
 
 <script type="text/javascript">
+var recordToDel;
+    function showDeletionConfirmation(employee) {
+        recordToDel = employee;
+        $('#companyDeletionConfirmation').modal('show');
+    }
 
 function setStatus(me, idName, value){
 	if(value == 0){
