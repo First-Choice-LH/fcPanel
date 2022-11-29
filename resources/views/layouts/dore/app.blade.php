@@ -247,12 +247,7 @@
                         </a>
                     </li>
 
-                    <li class="@if(Request::is('activity')) active @endif">
-                       <a href="{{ url('/activity/') }}">
-                           <i class="iconsmind-Warning-Window"></i>
-                           <span>Alerts</span>
-                       </a>
-                    </li>
+                   
 <!-- 
                     <li class="@if(Request::is('timesheets')) active @endif">
                         <a href="{{ url('/timesheets/') }}">
@@ -296,8 +291,18 @@
                         </a>
                     </li>
 
-
-
+                    <!-- <li class="@if(Request::is('staff')) active @endif @if(Request::is('staff/*')) active @endif">
+                        <a href="{{ url('/staff/') }}">
+                            <i class="iconsmind-User"></i>
+                            <span>Staff</span>
+                        </a>
+                    </li>  -->
+                    <li class="@if(Request::is('activity')) active @endif">
+                       <a href="{{ url('/activity/') }}">
+                           <i class="iconsmind-Warning-Window"></i>
+                           <span>Alerts</span>
+                       </a>
+                    </li>
                      <!-- <li class="@if(Request::is('requests')) active @endif @if(Request::is('requests/*')) active @endif">
                         <a href="{{ url('/requests/') }}">
                             <i class="iconsmind-Administrator"></i>
