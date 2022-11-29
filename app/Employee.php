@@ -39,13 +39,21 @@ class Employee extends Model{
 		return $this->belongsToMany('App\Job');
 	}
 
-	public function position()
-	{
-		return $this->hasOne('\App\Position');
-	}
-
 	public function timesheets()
 	{
 		return $this->hasMany('\App\Timesheet');
 	}
+
+    public function documents()
+	{
+		return $this->hasMany('\App\EmployeeLicence', 'emp_id');
+	}
+
+    function positions() {
+        return $this->hasMany('\App\EmployeePosition');
+    }
+
+    function notes() {
+        return $this->hasMany('\App\EmployeeNote');
+    }
 }

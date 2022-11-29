@@ -29,6 +29,7 @@ Route::get('/supervisors', 'ApiController@getSupervisors');
 Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
 
 Route::get('/employees', 'ApiController@getEmployees');
+Route::get('/employee', 'ApiController@getEmployeeDetail');
 Route::post('/employee', 'ApiController@addEmployee');
 Route::post('/employee/job', 'ApiController@assignJobToEmployee');
 
