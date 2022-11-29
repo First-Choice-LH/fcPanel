@@ -34,7 +34,7 @@
 						<th scope="col" class="d-none d-md-table-cell d-lg-table-cell" data-col="first_name">First Name</th>
 						<th scope="col" class="" data-col="last_name">Last Name</th>
 						<th scope="col" class="" data-col="phone">Phone</th>
-						<th scope="col" class="text-center" width="12%">Actions</th>
+						<th scope="col" class="text-center">Actions</th>
 					</tr>
 				</thead>
 			  	<tbody>
@@ -47,12 +47,14 @@
 			  			<td class="">{{ $row->last_name }}</td>
 			  			<td class="">{{ $row->phone }}</td>
 			  			<td class="text-center">
-						  
+
 						<a class="btn btnbg btn-sm btn-info" href="{{ url('/employees/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
 						<a class="btn btnbg btn-sm btn-info" href="{{ url('/employees/jobsite/'.$row->id) }}" title="Sites"><i class="fa fa-building"></i></a>
 						<a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" title="Delete"><i class="fa fa-trash"></i></a>
-                                
+
 							<!-- <div class="dropdown d-block">
+                            <a class="btn btn-sm btnbg" href="{{ url('/employees/update/'.$row->id) }}">Edit</a>
+							<div class="dropdown d-block">
 								<button type="button" class="btn btnbg btn-sm dropdown-toggle" data-toggle="dropdown">
 								Options
 								</button>
