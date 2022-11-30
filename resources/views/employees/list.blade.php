@@ -41,16 +41,16 @@
 			  		@foreach($rows as $row)
 			  		<tr>
 			  			<td class="d-none d-md-table-cell d-lg-table-cell text-center">
-							<button class="btn btnbg btn-sm btn-info ml-2 " onclick="viewEmployeeDetails({{ $row->id }})" title="View"><i class="fa fa-search-plus"></i></button>
+							<button class="btn btnbg btn-sm btn-info ml-2 " onclick="viewEmployeeDetails({{ $row->id }})" data-toggle="tooltip" title="View"><i class="fa fa-search-plus"></i></button>
                                </td>
 			  			<td class="d-none d-md-table-cell d-lg-table-cell">{{ $row->first_name }}</td>
 			  			<td class="">{{ $row->last_name }}</td>
 			  			<td class="">{{ $row->phone }}</td>
 			  			<td class="text-center">
 						  
-						<a class="btn btnbg btn-sm btn-info" href="{{ url('/employees/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
-						<a class="btn btnbg btn-sm btn-info" href="{{ url('/employees/jobsite/'.$row->id) }}" title="Sites"><i class="fa fa-building"></i></a>
-						<a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" title="Delete"><i class="fa fa-trash"></i></a>
+						<a class="btn btnbg btn-sm btn-info" href="{{ url('/employees/update/'.$row->id) }}" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+						<a class="btn btnbg btn-sm btn-info" href="{{ url('/employees/jobsite/'.$row->id) }}" data-toggle="tooltip" title="Sites"><i class="fa fa-building"></i></a>
+						<a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></a>
                                 
 							<!-- <div class="dropdown d-block">
 								<button type="button" class="btn btnbg btn-sm dropdown-toggle" data-toggle="dropdown">

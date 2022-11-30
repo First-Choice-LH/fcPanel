@@ -333,11 +333,7 @@
 @section('script')
 
 <script type="text/javascript">
-var recordToDel;
-    function showDeletionConfirmation(employee) {
-        recordToDel = employee;
-        $('#companyDeletionConfirmation').modal('show');
-    }
+
 
 function setStatus(me, idName, value){
 	if(value == 0){

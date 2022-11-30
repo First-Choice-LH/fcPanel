@@ -586,7 +586,7 @@
                             </div>`;
                 }
 
-                markup += `<button class="btn btn-sm btn-default d-block m-auto" title="Edit this job" onclick="showEditJobModal(${row.id})"><i class="fa fa-edit"></i></button>
+                markup += `<button class="btn btn-sm btn-default d-block m-auto" data-toggle="tooltip" title="Edit Job" onclick="showEditJobModal(${row.id})"><i class="fa fa-edit"></i></button>
                         </td>
                 </tr>`;
             }
@@ -721,7 +721,7 @@
             $.post(`${BASE_URL}/api/employee/job`, {empId : selectedEmp.id, jobId: selectedEmp.jobId}, function(response) {
                 if( response == true) {
                     $.notify('Employee has been assigned with the job successfully', "success");
-                    $(e.currentTarget).parents('tr').first().remove();
+                    $(e.currentTarget).parents('tr').firstName().remove();
                     calendar.refetchEvents()
                 } else if(response) {
                     $.notify(response);
