@@ -249,8 +249,11 @@ class EmployeeController extends Controller
         /*start*/
 
         $old_lic = EmployeeLicence::where('emp_id',$emp_id)->pluck('id')->toArray();
+
         if( !empty($request['license_number']) ) {
             foreach($request['license_number'] as $key => $licence) {
+                if(empty($request['license_type'][$key])) continue;
+
                 if(isset($request['license_id'][$key])){
                     $lic = EmployeeLicence::find($request['license_id'][$key]);
                     if (($key2 = array_search($request['license_id'][$key], $old_lic)) !== false) {
@@ -264,7 +267,7 @@ class EmployeeController extends Controller
                     }
                 }
 
-                $file = is_array($request['license_image_front']) ? $request['license_image_front'][$key] : null;
+                $file = is_array($request['license_image_front']) && !empty($request['license_image_front'][$key]) ? $request['license_image_front'][$key] : null;
                 if($file != null ){
                     $name = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
                     $file->move(public_path('/dore/employee'), $name);
@@ -279,7 +282,7 @@ class EmployeeController extends Controller
                     $name = isset($lic->license_image_front) ? $lic->license_image_front : '';
                 }
 
-                $file1 = is_array($request['license_image_back']) ? $request['license_image_back'][$key] : null;
+                $file1 = is_array($request['license_image_back']) && !empty($request['license_image_back'][$key]) ? $request['license_image_back'][$key] : null;
                 if($file1 != null ){
                     $name1 = strtotime(Carbon::now()).'.'.$file1->getClientOriginalExtension();
                     $file1->move(public_path('/dore/employee'), $name1);

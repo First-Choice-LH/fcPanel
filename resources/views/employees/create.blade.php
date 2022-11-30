@@ -473,11 +473,11 @@
        <div class="form-group row">
            <div class="col-lg-6">
                <label for="image">Upload Photo Front</label>
-               <input type="File" class="form-control" name="license_image[]" aria-describedby="image" placeholder="Image" value=""/>
+               <input type="File" class="form-control" name="license_image_front[]" aria-describedby="image" placeholder="Image" value=""/>
            </div>
            <div class="col-lg-6">
                <label for="image">Upload Photo Back</label>
-               <input type="File" class="form-control" name="license_image[]" aria-describedby="image" placeholder="Image" value=""/>
+               <input type="File" class="form-control" name="license_image_back[]" aria-describedby="image" placeholder="Image" value=""/>
            </div>
        </div>
    </div>
@@ -748,7 +748,7 @@ $('body').on('click', '.remove_product_first', function() {
 });
 $('body').on('click', '.image-preview', function() {
     var src = $(this).attr('data-src');
-    var url = "http://timesheets.firstchoicelabour.com.au/dore/employee/";
+    var url = BASE_URL + "/dore/employee/";
     $('#modal-image').attr('src',url+src);
     $('#m_modal_6').modal('toggle');
 });
