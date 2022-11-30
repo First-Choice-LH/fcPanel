@@ -17,7 +17,10 @@ use App\User;
 use App\Employee;
 use App\Jobsite;
 use App\EmployeeLicence;
+use App\Position;
 use App\EmployeeJobsite;
+use App\EmployeePosition;
+use App\EmployeeNote;
 
 use Carbon\Carbon;
 use App\Timesheet;
@@ -103,15 +106,40 @@ class EmployeeController extends Controller
         $data = array();
 
         $data['clients'] = $this->client->dropdown();
-        $data['positions'] = $this->position->dropdown();
+
+        $positions              = Position::where('status', 1)->get();
+        $data['positions']      = [];
+        foreach($positions as $position) {
+            $data['positions'][] = [
+                'id'            => $position->id,
+                'label'         => $position->title
+            ];
+        }
+
+        $data['positions']      = json_encode($data['positions']);
+
         return view('employees.create', $data);
     }
 
-    public function update($id){
+    public function update($id) {
         $data = [];
         $data['row'] = $this->employee->show($id);
         $data['licence'] = EmployeeLicence::where('emp_id',$data['row']->id)->get();
-        $data['positions'] = $this->position->dropdown();
+
+        $positions              = Position::where('status', 1)->get();
+        $data['positions']      = [];
+        foreach($positions as $position) {
+            $data['positions'][] = [
+                'id'            => $position->id,
+                'label'         => $position->title
+            ];
+        }
+
+        $data['positions']          = json_encode($data['positions']);
+        $data['employeePositions']  = EmployeePosition::where('employee_id', $id)->with('position')->get()->toArray();
+        $data['employeePositions']  = json_encode($data['employeePositions']);
+
+        $data['notes']              = EmployeeNote::where('employee_id', $id)->with('userInfo')->orderBy('created_at', 'DESC')->get();
 
         $emp_id = $this->employee->show($id)->user_id;
         $data['user'] = User::where('id',$emp_id)->first();
@@ -155,7 +183,6 @@ class EmployeeController extends Controller
         $fields = [
             'first_name',
             'last_name',
-            'position_id',
             'phone',
             'email',
             'account_name',
@@ -177,7 +204,7 @@ class EmployeeController extends Controller
         $employee_row = $request->only($fields);
         $employee_row['license_image'] = $name;
         $employee_row['insurance'] = $public;
-
+        DB::beginTransaction();
         if($id == null){
             $new_employee = $this->employee->create($employee_row);
             $this->employee->attach($new_employee->id, $jobsite_id);
@@ -192,6 +219,29 @@ class EmployeeController extends Controller
             $type = EMP_PROFILE;
             $emp_id = $id;
             activity(Auth::id(),$message,$type,$emp_id,NULL,NULL,NULL);
+        }
+
+
+       $positionFields     = $request->only('position_id');
+       // Delete previous entries, add new ones
+       EmployeePosition::where('employee_id', $id)->delete();
+
+       foreach($positionFields['position_id'] as $index => $value) {
+           if(!$value) continue;
+
+           EmployeePosition::create([
+               'employee_id'     => $id,
+               'position_id'   => $value
+           ]);
+       }
+
+       // Save note if any
+       if( $request->get('notes') ) {
+            EmployeeNote::create([
+                'employee_id'       => $id,
+                'note'              => $request->get('notes'),
+                'added_by'          => Auth::user()->id
+            ]);
         }
 
         /*start*/
@@ -267,6 +317,7 @@ class EmployeeController extends Controller
             }
         }
         /*end*/
+        DB::commit();
         return redirect('/employees/');
     }
     public function createEmployee(){
@@ -297,7 +348,6 @@ class EmployeeController extends Controller
         $fields = [
             'first_name',
             'last_name',
-            'position_id',
             'phone',
             'email',
             'account_name',
@@ -338,6 +388,21 @@ class EmployeeController extends Controller
             $employeeid = $id;
             activity(Auth::id(),$message,$type,$employeeid,NULL,NULL,NULL);
        }
+
+       $positionFields     = $request->only('position_id');
+
+       // Delete previous entries, add new ones
+       EmployeePosition::where('employee_id', $id)->delete();
+
+       foreach($positionFields['position_id'] as $index => $value) {
+           if(!$value) continue;
+
+           EmployeePosition::create([
+               'employee_id'     => $id,
+               'position_id'   => $value
+           ]);
+       }
+
 
         $old_lic = EmployeeLicence::where('emp_id',$emp_id)->pluck('id')->toArray();
         foreach($request['license_number'] as $key => $licence){

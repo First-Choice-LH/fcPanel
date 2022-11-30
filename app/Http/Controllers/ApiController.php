@@ -14,6 +14,8 @@ use App\Jobsite;
 use App\ClientPositionRate;
 use App\Supervisor;
 use App\ClientNote;
+use App\EmployeeNote;
+use App\EmployeePosition;
 use DB;
 use Auth;
 
@@ -221,6 +223,28 @@ class ApiController extends Controller
         }
 
         return response()->json($isDeleted);
+    }
+
+    public function getEmployeeDetail(Request $request) {
+        $employee                       = Employee::with('jobsites', 'documents')->find($request->get('id'));
+        $employeePositions              = EmployeePosition::where('employee_id', $request->get('id'))->with('position')->get();
+
+        $employee->employee_positions   = $employeePositions;
+
+        $notes                          = EmployeeNote::where('employee_id', $request->get('id'))->with('userInfo')->get();
+        $formattedNotes                 = [];
+        foreach($notes as $note) {
+            $formattedNotes[]   = [
+                'id'        => $note->id,
+                'note'      => $note->note,
+                'user'      => $note->userInfo->name,
+                'created_at'=> getUserFriendlyDateTime($note->created_at),
+            ];
+        }
+
+        $employee->notes                = $formattedNotes;
+        $employee->last_updated         = getUserFriendlyDateTime($employee->updated_at);
+        return response()->json($employee);
     }
 
     public function addEmployee(Request $request) {

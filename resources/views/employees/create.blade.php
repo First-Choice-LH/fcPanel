@@ -79,7 +79,7 @@
 			</div> --}}
 
 			<div class="card padall30 mrb30">
-				<h4>Location<hr class="hralignleft"/></h4>
+				<h4>Position<hr class="hralignleft"/></h4>
 
 				@if (\Request::is('employees/create'))
 				<div class="form-group row">
@@ -108,8 +108,9 @@
 					<input type="hidden" value="0" name="jobsite_id"/>
 				@endif
 
-				<div class="form-group row">
-					<div class="col-lg-6">
+				<div class="form-group">
+                    <div id="positionContainer"></div>
+					{{-- <div class="col-lg-6">
 						<label for="position">Position</label>
 
 						<select name="position_id" class="form-control">
@@ -120,11 +121,37 @@
 							</option>
 							@endforeach
 						</select>
-					</div>
-					<div class="col-lg-6">
-					</div>
+					</div> --}}
 				</div>
 			</div>
+
+            <div class="card padall30 mrb30">
+                <h4>Notes<hr class="hralignleft"/></h4>
+                <div class="form-group row">
+                    <div class="col-lg-8">
+                        <input type="text" class="form-control" name="notes" aria-describedby="notes" placeholder="Enter new notes" />
+                    </div>
+                </div>
+
+                @if(count($notes))
+                <div class="row" >
+                    <div class="col-lg-8">
+                        <table class="table">
+                            @foreach($notes as $note)
+                            <tr>
+                                <td>{{ $note->userInfo->name }}</td>
+                                <td>{{ getUserFriendlyDateTime($note->created_at) }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">&quot;{{ $note->note }}&quot;</td>
+                            </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
+                @endif
+
+            </div>
 
 			<div class="card padall30 mrb30">
 				<h4>Financial information<hr class="hralignleft"/></h4>
@@ -397,6 +424,18 @@
 
 
 <div style="display: none;">
+
+    <div class="row positions-row cloneable">
+        <div class="col-lg-4 position-input-col">
+            <input type="text" class="form-control position-search" placeholder="Position" value="" />
+            <input type="hidden" class="form-control" placeholder="Position" name="position_id[]" value="" />
+        </div>
+    </div>
+    <div class="col-lg-2 add-more-position-col cloneable">
+        <button type="button" class="btn btnbg btn-sm mt-2" onclick="addNewPositionRow()"><i class="fa fa-plus text-white" role="button"></i></button>
+    </div>
+    <button type="button" class="remove-position-row-btn cloneable btn btnbg btn-sm mt-2" onclick="removePositionRow()"><i class="fa fa-minus text-white" role="button"></i></button>
+
    <div class="clone_licence licence_row">
        <div class="form-group row">
            <div class="col-lg-12 text-right">
@@ -603,6 +642,91 @@ function remove(elem){
         });
     }
 }
+
+function remove(docId, $elem) {
+    if(confirm("Are you sure you want to delete file ?")){
+        $.ajax({
+            type:'DELETE',
+            url: `${BASE_URL}/api/client/document?` + $.param({
+                "clientId"      : $('input[name="id"]').val(),
+                "docId"         : docId
+            }),
+            success:function(response) {
+                if(response) {
+                    if( $elem.hasClass('first-document') ) {
+                        var clone = $('.clone_document').clone();
+                        $(clone).removeClass('clone_document');
+                        $(clone).removeClass('active');
+                        $(clone).find('.remove_doc').remove();
+                        $('.audience-tab-content').append(clone);
+                    }
+
+                    $elem.closest('.document_row').remove();
+                }
+            }
+        });
+    }
+}
+
+// Add a new row to position container element and set the autocomplete on that row
+function addNewPositionRow(position = null) {
+
+    $('#positionContainer .positions-row').find('.add-more-position-col').remove();
+
+    var positionsRow = $('.positions-row.cloneable').clone();
+    positionsRow.removeClass('cloneable');
+
+    let actionBtns    = getPositionRowActionBtns();
+    positionsRow.append(actionBtns);
+
+    $('#positionContainer').append( positionsRow );
+
+    let positions = JSON.parse('{!! ($positions) !!}');
+    // Set default values gracefully
+    if(position) {
+        $(positionsRow).find('input').first().val(position.position.title);
+        $(positionsRow).find('input[name="position_id[]"]').val(position.position_id);
+    }
+
+    $('#positionContainer .positions-row').last().find('.position-search').autocomplete({
+        source: positions,
+        select: function (event, ui) {
+            $(this).next('input[type="hidden"]').val( ui.item.id );
+        }
+    });
+}
+
+
+// This function decides which buttons are required for current state/number of rows on positions section
+function getPositionRowActionBtns(countCheck = 0) {
+    var addMoreCol = $('.add-more-position-col').clone();
+    addMoreCol.removeClass('cloneable');
+
+    if($('#positionContainer .positions-row').length > countCheck) {
+        var removeBtn = $('.remove-position-row-btn').clone();
+        removeBtn.removeClass('cloneable');
+        $(addMoreCol).append(removeBtn);
+    }
+
+    return addMoreCol;
+}
+
+// This function removes the clicked button row and moves the button to previous row
+function removePositionRow() {
+    $('#positionContainer .positions-row').last().remove();
+    let actionBtns = getPositionRowActionBtns(1);
+    $('#positionContainer .positions-row').last().append( actionBtns );
+}
+
+$(document).ready(function() {
+    var employeePositions = JSON.parse('{!! ($employeePositions) !!}');
+
+    for(let rate of employeePositions) {
+        addNewPositionRow(rate);
+    }
+
+    if(!employeePositions.length) addNewPositionRow();
+});
 
 $('.add-more-audience').click(function(){
     var clone = $('.clone_licence').clone();
