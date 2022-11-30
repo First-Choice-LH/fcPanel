@@ -174,10 +174,12 @@ class EmployeeController extends Controller
         $email = $request->input('email');
         $emp_id = $id;
 
-        $file = $request->file('license_image');
-        if($file != null ){
-            $name = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('/dore/employee'), $name);
+        $files = $request->file('license_image');
+        if($files != null && is_array($files)){
+            foreach($files as $file) {
+                $name = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('/dore/employee'), $name);
+            }
         }
 
         $fields = [
@@ -247,59 +249,62 @@ class EmployeeController extends Controller
         /*start*/
 
         $old_lic = EmployeeLicence::where('emp_id',$emp_id)->pluck('id')->toArray();
-        foreach($request['license_number'] as $key => $licence){
-            if(isset($request['license_id'][$key])){
-                $lic = EmployeeLicence::find($request['license_id'][$key]);
-                if (($key2 = array_search($request['license_id'][$key], $old_lic)) !== false) {
-                    unset($old_lic[$key2]);
-                }
-            }else{
-                if($request['license_number'][$key] != ''){
-                    $lic = new EmployeeLicence;
+        if( !empty($request['license_number']) ) {
+            foreach($request['license_number'] as $key => $licence) {
+                if(isset($request['license_id'][$key])){
+                    $lic = EmployeeLicence::find($request['license_id'][$key]);
+                    if (($key2 = array_search($request['license_id'][$key], $old_lic)) !== false) {
+                        unset($old_lic[$key2]);
+                    }
                 }else{
-                    continue;
-                }
-            }
-
-            $file = is_array($request['license_image_front']) ? $request['license_image_front'][$key] : null;
-            if($file != null ){
-                $name = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('/dore/employee'), $name);
-
-                if(isset($lic->license_image_front) && $lic->license_image_front != ''){
-                    if (file_exists(public_path('/dore/employee/'.$lic->license_image_front))){
-                        unlink(public_path('/dore/employee/'.$lic->license_image_front));
-                    }
-
-                }
-            }else{
-                $name = isset($lic->license_image_front) ? $lic->license_image_front : '';
-            }
-
-            $file1 = is_array($request['license_image_back']) ? $request['license_image_back'][$key] : null;
-            if($file1 != null ){
-                $name1 = strtotime(Carbon::now()).'.'.$file1->getClientOriginalExtension();
-                $file1->move(public_path('/dore/employee'), $name1);
-
-                if(isset($lic->license_image_back) && $lic->license_image_back != ''){
-                    if (file_exists(public_path('/dore/employee/'.$lic->license_image_back))){
-                    unlink(public_path('/dore/employee/'.$lic->license_image_back));
+                    if($request['license_number'][$key] != ''){
+                        $lic = new EmployeeLicence;
+                    }else{
+                        continue;
                     }
                 }
-            }else{
-                $name1 = isset($lic->license_image_back) ? $lic->license_image_back : '';
+
+                $file = is_array($request['license_image_front']) ? $request['license_image_front'][$key] : null;
+                if($file != null ){
+                    $name = strtotime(Carbon::now()).'.'.$file->getClientOriginalExtension();
+                    $file->move(public_path('/dore/employee'), $name);
+
+                    if(isset($lic->license_image_front) && $lic->license_image_front != ''){
+                        if (file_exists(public_path('/dore/employee/'.$lic->license_image_front))){
+                            unlink(public_path('/dore/employee/'.$lic->license_image_front));
+                        }
+
+                    }
+                }else{
+                    $name = isset($lic->license_image_front) ? $lic->license_image_front : '';
+                }
+
+                $file1 = is_array($request['license_image_back']) ? $request['license_image_back'][$key] : null;
+                if($file1 != null ){
+                    $name1 = strtotime(Carbon::now()).'.'.$file1->getClientOriginalExtension();
+                    $file1->move(public_path('/dore/employee'), $name1);
+
+                    if(isset($lic->license_image_back) && $lic->license_image_back != ''){
+                        if (file_exists(public_path('/dore/employee/'.$lic->license_image_back))){
+                        unlink(public_path('/dore/employee/'.$lic->license_image_back));
+                        }
+                    }
+                }else{
+                    $name1 = isset($lic->license_image_back) ? $lic->license_image_back : '';
+                }
+
+
+                $lic->emp_id = $emp_id;
+                $lic->license_type = $request['license_type'][$key];
+                $lic->other_type = $request['type_other'][$key];
+                $lic->license_date = $request['license_date'][$key];
+                $lic->license_number = $request['license_number'][$key];
+                $lic->license_image_front = $name;
+                $lic->license_image_back = $name1;
+                $lic->save();
             }
-
-
-            $lic->emp_id = $emp_id;
-            $lic->license_type = $request['license_type'][$key];
-            $lic->other_type = $request['type_other'][$key];
-            $lic->license_date = $request['license_date'][$key];
-            $lic->license_number = $request['license_number'][$key];
-            $lic->license_image_front = $name;
-            $lic->license_image_back = $name1;
-            $lic->save();
         }
+
         if(count($old_lic) > 0){
             foreach($old_lic as $old){
                 $db_lic = EmployeeLicence::find($old);
