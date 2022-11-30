@@ -31,6 +31,7 @@ Route::get('/calendar/events/jobs', 'ApiController@getCalendarJobEvents');
 Route::get('/employees', 'ApiController@getEmployees');
 Route::get('/employee', 'ApiController@getEmployeeDetail');
 Route::post('/employee', 'ApiController@addEmployee');
+Route::delete('/employee', 'ApiController@removeEmployee');
 Route::post('/employee/job', 'ApiController@assignJobToEmployee');
 
 Route::get("/encrypt/project","ApiController@encryptProject");

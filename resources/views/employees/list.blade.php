@@ -207,6 +207,26 @@
         </div>
     </div>
 
+    <div class="modal fade" id="employeeDeletionConfirmation" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-warning"></i> Deletion Confirmation</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this employee record?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btnbg btn-sm" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btnbg btn-sm" onclick="deleteEmployeeRecord()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	</div>
 	</div>
 </div>
@@ -301,6 +321,27 @@
 
         });
         $('#employeeDetailsModal').modal('show');
+    }
+
+    var recordToDel;
+    function showDeletionConfirmation(empId) {
+        recordToDel = empId;
+        $('#employeeDeletionConfirmation').modal('show');
+    }
+
+    function deleteEmployeeRecord() {
+        $.ajax({
+            url: `${BASE_URL}/api/employee`,
+            type: 'DELETE',
+            success: function(response) {
+                $.notify(response, "success");
+                $('#employeeDeletionConfirmation').modal('hide');
+                setTimeout(function() {
+                    window.location.href = window.location.href;
+                }, 1000);
+            },
+            data: {empId: recordToDel}
+        });
     }
 
     function viewDocument(frontDocName, backDocName) {

@@ -16,6 +16,7 @@ use App\Supervisor;
 use App\ClientNote;
 use App\EmployeeNote;
 use App\EmployeePosition;
+use App\EmployeeLicence;
 use DB;
 use Auth;
 
@@ -63,6 +64,22 @@ class ApiController extends Controller
         Client::find($request->get('clientId'))->delete();
         // ClientDocument::where('client_id', $request->get('clientId'));
         return response()->json('Company record deleted succcessfully!');
+    }
+
+    public function removeEmployee(Request $request) {
+        DB::beginTransaction();
+        Employee::find($request->get('empId'))->delete();
+
+        $docs = EmployeeLicence::where('emp_id', $request->get('empId'))->get();
+
+        foreach($docs as $doc) {
+            @unlink(public_path('/dore/employee/'.$doc->license_image_front));
+            @unlink(public_path('/dore/employee/'.$doc->license_image_back));
+            $doc->delete();
+        }
+
+        DB::commit();
+        return response()->json('Employee record deleted succcessfully!');
     }
 
     public function updateClientNotes(Request $request) {
