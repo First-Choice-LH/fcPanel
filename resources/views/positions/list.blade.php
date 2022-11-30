@@ -25,7 +25,7 @@
 							<tr>
 								<th scope="col" class="d-none d-md-table-cell d-lg-table-cell" width="10%">#</th>
 								<th scope="col" class="" data-col="title">Position</th>
-								<th scope="col" class="text-center" width="10%">&nbsp;</th>
+								<th scope="col" class="text-center" width="10%">Actions</th>
 							</tr>
 						</thead>
 					  	<tbody>
@@ -33,7 +33,7 @@
 					  		<tr>
 					  			<td class="d-none d-md-table-cell d-lg-table-cell">{{ $i++ }}</td>
 					  			<td class="">{{ $row->title }}</td>
-					  			<td class="text-center"><a class="btn btnbg btn-sm btn-info" href="{{ url('/positions/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a></td>
+					  			<td class="text-center"><a class="btn btnbg btn-sm btn-info" href="{{ url('/positions/update/'.$row->id) }}" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a></td>
 				  			</tr>
 				  			@endforeach
 					  	</tbody>

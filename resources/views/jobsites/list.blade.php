@@ -26,7 +26,7 @@
                                 <th scope="col" class="d-none d-md-table-cell" data-col="company_name">Company</th>
 								<th scope="col" class="" data-col="address">JOBSITE ADDRESS</th>
                                 <th scope="col" class="">Status</th>
-								<th scope="col" class="" width="10%">&nbsp;</th>
+								<th scope="col" class="" width="10%">Actions</th>
 							</tr>
 						</thead>
 					  	<tbody>
@@ -46,8 +46,8 @@
                                    }?>
                                </td>
                                 <td class="text-center">
-                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}" title="View"><i class="fa fa-search"></i></a>
-                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}" data-toggle="tooltip" title="View"><i class="fa fa-search"></i></a>
+                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/jobsites/update/'.$row->id) }}" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
                                 </td>
                               </tr>
                               @endforeach

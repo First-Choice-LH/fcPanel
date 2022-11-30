@@ -58,7 +58,7 @@
                             <tr>
                                     <th class="text-center">
                                     <!-- {{ $i++ }} -->
-                                    <button class="btn btnbg btn-sm btn-info ml-2 " onclick="viewClientDetails({{ $row->id }})" title="View"><i class="fa fa-search-plus"></i></button>
+                                    <button class="btn btnbg btn-sm btn-info ml-2 " onclick="viewClientDetails({{ $row->id }})" data-toggle="tooltip" title="View"><i class="fa fa-search-plus"></i></button>
                                 </th>
                                 <td class="">{{ $row->company_name }}</td>
                                 <td class="">{{ $row->office_address }}</td>
@@ -72,8 +72,8 @@
                                     }?>
                                 </td>
                                 <td class="text-center">
-                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/clients/update/'.$row->id) }}" title="Edit"><i class="fa fa-edit"></i></a>
-                                    <a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" title="Delete"><i class="fa fa-trash"></i></a>
+                                    <a class="btn btnbg btn-sm btn-info" href="{{ url('/clients/update/'.$row->id) }}" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+                                    <a class="btn btnbg btn-sm btn-info text-white" onclick="showDeletionConfirmation({{ $row->id }})" data-toggle="tooltip" title="Delete"><i class="fa fa-trash"></i></a>
                                 </td>
 
                             </tr>
