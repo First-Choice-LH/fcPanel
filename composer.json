@@ -17,7 +17,8 @@
         "laravel/tinker": "^1.0",
         "spatie/laravel-permission": "^2.19",
         "thomaspark/bootswatch": "^4.1",
-        "twitter/bootstrap": "^4.1"
+        "twitter/bootstrap": "^4.1",
+        "webelightdev/laravel-push-notification": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

@@ -82,10 +82,12 @@
                             <a class="btn btnbg btn-primary" href="/employee/create">{{ __('CREATE ACCOUNT') }}</a>
                         </div> -->
                         
-                        <div class="col-md-12 text-right">
-                            <button type="submit" id="login_btn" class="btn btnbg btn-primary">
-                                {{ __('Login') }}
-                            </button>
+                        <div class="col-md-12 desktop_row">
+                            <div class="col-md-12 text-right">
+                                <button type="submit" id="login_btn" class="btn btnbg btn-primary">
+                                    {{ __('Login') }}
+                                </button>
+                            </div>
                         </div>                    
                     </div>
                     <div class="form-group row mobile_row">
