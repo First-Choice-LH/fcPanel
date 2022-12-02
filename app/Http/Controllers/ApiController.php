@@ -181,7 +181,7 @@ class ApiController extends Controller
         $jobData['end_time']    = $request->get('start_date');
 
         Job::create($jobData);
-        return response()->json( $jobData );
+        return response()->json( 'Job created successfully!' );
     }
 
     public function updateJob(Request $request) {
