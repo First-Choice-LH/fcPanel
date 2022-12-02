@@ -163,11 +163,11 @@ class ApiController extends Controller
     public function createJob(Request $request) {
 
         $validator = Validator::make($request->all(), [
-            'client_id'     => 'required',
-            'jobsite_id'    => 'required',
-            'supervisor_id'    => 'required',
+            'client_id'     => 'required|numeric',
+            'jobsite_id'    => 'required|numeric',
+            'supervisor_id'    => 'required|numeric',
             'start_date'    => 'required',
-            'position_id'   => 'required'
+            'position_id'   => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
@@ -187,11 +187,11 @@ class ApiController extends Controller
     public function updateJob(Request $request) {
 
         $validator = Validator::make($request->all(), [
-            'id'            => 'required',
-            'client_id'     => 'required',
-            'jobsite_id'    => 'required',
-            'supervisor_id' => 'required',
-            'position_id'   => 'required'
+            'id'            => 'required|numeric',
+            'client_id'     => 'required|numeric',
+            'jobsite_id'    => 'required|numeric',
+            'supervisor_id' => 'required|numeric',
+            'position_id'   => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
