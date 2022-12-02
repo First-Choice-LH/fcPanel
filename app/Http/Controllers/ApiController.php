@@ -184,17 +184,40 @@ class ApiController extends Controller
         return response()->json( $jobData );
     }
 
+    public function updateJob(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'id'            => 'required',
+            'client_id'     => 'required',
+            'jobsite_id'    => 'required',
+            'supervisor_id' => 'required',
+            'position_id'   => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->all());
+        }
+
+        $jobData                = $request->only('client_id', 'jobsite_id', 'supervisor_id', 'position_id', 'comments');
+
+        Job::find($request->get('id'))->update($jobData);
+
+        return response()->json( 'Job updated successfully!' );
+    }
+
     function getEmployees(Request $request) {
 
         $conditions         = [];
         $data               = [];
         $transformedData    = ["results" => []];
 
-        $employees      = Employee::select('id', 'first_name', 'last_name', 'position_id');
-
-        if( $request->get('position') ) {
-            $employees->where('position_id', $request->get('position'));
-        }
+        $employees      = Employee::select('id', 'first_name', 'last_name')
+                                ->with('positions')
+                                ->whereHas('positions', function($q) use($request) {
+                                    if ($request->get('position')) {
+                                        $q->where('position_id', $request->get('position'));
+                                    }
+                                });
 
         if( $request->get('q') ) {
             $employees->where(function($query) use($request) {
@@ -276,10 +299,15 @@ class ApiController extends Controller
             return response()->json($validator->errors()->all());
         }
 
-        $employeeData   = $request->only('first_name', 'last_name', 'phone', 'position_id');
+        $employeeData   = $request->only('first_name', 'last_name', 'phone');
         DB::beginTransaction();
 
         $employee = $this->employee->create($employeeData);
+        EmployeePosition::create([
+            'employee_id'   => $employee->id,
+            'position_id'   => $request->get('position_id')
+        ]);
+
         $message = "created by Admin";
         $type = EMP_PROFILE;
         activity(1, $message, $type, $employee->id, NULL, NULL, NULL);

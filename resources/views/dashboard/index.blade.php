@@ -331,7 +331,7 @@
                         <div class="form-group row">
                             <div class="col-lg-6">
                                 <label for="comments">Comments</label>
-                                <textarea class="form-control" placeholder="Any special notes?"></textarea>
+                                <textarea class="form-control" name="comments" placeholder="Any special notes?"></textarea>
                             </div>
                         </div>
                     </div>
@@ -348,7 +348,8 @@
     <div class="modal fade" id="editJobModal" tabindex="-1" role="dialog" aria-labelledby="editJobModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <form id="jobRequestForm">
+                <form id="jobEditForm">
+                    <input type="hidden" id="jobId" name="id" />
                     <div class="modal-header">
                         <h4 class="modal-title">Edit Job</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -398,14 +399,14 @@
                         <div class="form-group row">
                             <div class="col-lg-6">
                                 <label for="comments">Comments</label>
-                                <textarea class="form-control comments-field" placeholder="Any special notes?"></textarea>
+                                <textarea class="form-control comments-field" name="comments" placeholder="Any special notes?"></textarea>
                             </div>
                         </div>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btnbg btn-sm btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btnbg btn-sm btn-primary">Add Job</button>
+                        <button type="submit" class="btn btnbg btn-sm btn-primary">Update</button>
                     </div>
                 </form>
             </div>
@@ -641,6 +642,27 @@
             });
         });
 
+        $('#jobEditForm').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url : `${BASE_URL}/api/job`,
+                data: $(this).serialize(),
+                method: 'put',
+                success: function(response) {
+                    if(Array.isArray(response)) {
+                        response.reverse();
+                        for(let err of response) {
+                            $.notify(err);
+                        }
+                    } else {
+                        $.notify(response, "success");
+                        $('#editJobModal').modal('hide');
+                        calendar.refetchEvents();
+                    }
+                }
+            });
+        });
+
     });
 
     function showAddJobModal(dateString) {
@@ -675,9 +697,9 @@
     }
 
     function showEditJobModal(id) {
-        return false; // feature in progress/draft, remove return when resume working on it
         $('#editJobModal').modal('show');
         $.get(`${BASE_URL}/api/job`, { id }, function(response) {
+            $('#jobId').val(id);
             // $('#editJobModal .jobsite-dropdown').val();
             $('#editJobModal .client-dropdown').val(response.client_id);
             getJobsites(response.client_id, response.jobsite_id, response.supervisor_id);
@@ -721,7 +743,7 @@
             $.post(`${BASE_URL}/api/employee/job`, {empId : selectedEmp.id, jobId: selectedEmp.jobId}, function(response) {
                 if( response == true) {
                     $.notify('Employee has been assigned with the job successfully', "success");
-                    $(e.currentTarget).parents('tr').firstName().remove();
+                    $(e.currentTarget).parents('tr').first().remove();
                     calendar.refetchEvents()
                 } else if(response) {
                     $.notify(response);
