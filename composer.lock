@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56ebcd606d13385b435002bd72541ab6",
+    "content-hash": "ea5e1911fb6fc123632cf8aa907efafb",
     "packages": [
         {
             "name": "andcarpi/laravel-popper",
@@ -5680,6 +5680,47 @@
                 }
             ],
             "time": "2021-12-12T22:59:22+00:00"
+        },
+        {
+            "name": "webelightdev/laravel-push-notification",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webelightdev/laravel-push-notification.git",
+                "reference": "48f5ecab2bcd00480ddd4ddde19ca21b930cd036"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webelightdev/laravel-push-notification/zipball/48f5ecab2bcd00480ddd4ddde19ca21b930cd036",
+                "reference": "48f5ecab2bcd00480ddd4ddde19ca21b930cd036",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Webelightdev\\LaravelPushNotification\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yash Barot",
+                    "email": "yashce04@gmail.com"
+                }
+            ],
+            "description": "Push Notifications using Laravel",
+            "support": {
+                "issues": "https://github.com/webelightdev/laravel-push-notification/issues",
+                "source": "https://github.com/webelightdev/laravel-push-notification/tree/1.0.1"
+            },
+            "time": "2019-08-07T13:01:09+00:00"
         }
     ],
     "packages-dev": [
@@ -7753,12 +7794,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "webelightdev/laravel-push-notification": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "7.4.*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }

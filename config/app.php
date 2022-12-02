@@ -146,7 +146,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
+        //Push Notifications
+        Webelightdev\LaravelPushNotification\PushNotificationServiceProvider::class,
         /*
          * Package Service Providers...
          */
