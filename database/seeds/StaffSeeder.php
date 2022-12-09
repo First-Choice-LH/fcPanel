@@ -35,8 +35,8 @@ class StaffSeeder extends Seeder
         // $user->save();
         // $user->assignRole('admin');
 
-        // Role::create(['name' => 'staff']);
-        // Role::create(['name' => 'allocator']);
+        Role::create(['name' => 'staff']);
+        Role::create(['name' => 'allocator']);
 
         $user = new User();
         $user->name = 'Bill';
