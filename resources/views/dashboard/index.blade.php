@@ -456,7 +456,9 @@
                     </div>
 
                     <div class="modal-footer">
+                        @if(Auth::user()->hasRole('admin') || Auth::user()->hasRole('supervisor'))
                         <div class="mr-auto"><a href="javascript:closeEmployeePopupAndRedirect();" title="Open employee form in new tab" class="alert-link text-info">Add complete information</a></div>
+                        @endrole
                         <button type="button" class="btn btnbg btn-sm btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btnbg btn-sm btn-primary">Quick Add</button>
                     </div>
@@ -728,7 +730,6 @@
                 data: function (params) {
                     var query = {
                         q       : params.term,
-                        position: $(this).data('position'),
                         job     : $(this).data('job'),
                     }
                     return query;

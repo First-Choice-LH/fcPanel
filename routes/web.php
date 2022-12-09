@@ -14,7 +14,7 @@
 Route::get('/', function () {
 	$user = Auth::user();
 
-	if(Auth::id() > 0 && $user->hasRole('admin')){
+	if(Auth::id() > 0 && $user->hasRole(['admin', 'allocator'])){
     	return redirect('/dashboard');
 	}
 
@@ -51,9 +51,6 @@ Route::get('getUserEmail/{username}', 'Auth\LoginController@getUserEmail');
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('register', 'Auth\RegisterController@register');
 
-Route::get('/employee/create', 'EmployeeController@createEmployee');
-Route::post('addEmployee', 'EmployeeController@saveEmployee');
-
 Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
 Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
@@ -76,10 +73,17 @@ Route::get('/test', 'ActivityController@test');
 # Api
 Route::get('/api/client_jobsites/{id}','ApiController@client_jobsites')->name('api.client_jobsites');
 
-Route::group(['middleware' => ['role:admin']], function () {
-
-	#Dashboard
+Route::group(['middleware' => ['role:admin|staff|allocator']], function () {
 	Route::get('/dashboard','DashboardController@index')->name('dashboard');
+});
+
+Route::group(['middleware' => ['role:admin|supervisor']], function () {
+    Route::get('/employee/create', 'EmployeeController@createEmployee');
+    Route::post('addEmployee', 'EmployeeController@saveEmployee');
+});
+
+
+Route::group(['middleware' => ['role:admin']], function () {
 
     #Activity
     Route::get('/activity/','ActivityController@index')->name('activity');
