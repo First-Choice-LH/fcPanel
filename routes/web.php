@@ -14,7 +14,7 @@
 Route::get('/', function () {
 	$user = Auth::user();
 
-	if(Auth::id() > 0 && $user->hasRole(['admin', 'allocator'])){
+	if(Auth::id() > 0 && ($user->hasRole('admin') || $user->hasRole('allocator'))) {
     	return redirect('/dashboard');
 	}
 
@@ -115,6 +115,12 @@ Route::group(['middleware' => ['role:admin']], function () {
 	Route::post('/employees/jobsites/assign/', 'EmployeeController@assign_save')->name('employees.assign.save');
 	Route::get('/employees/jobsites/unassign/{employee_id}/{jobsite_id}', 'EmployeeController@unassign')->name('employees.unassign');
 	Route::get('/remove/{id}', 'EmployeeController@remove_image');
+
+    #Staff
+    Route::get('/staff', 'StaffController@index')->name('employees');
+	Route::get('/staff/create/', 'StaffController@create')->name('employees.create');
+	Route::get('/staff/update/{id}', 'StaffController@update')->name('employees.update');
+	Route::post('/staff/save/', 'StaffController@save')->name('employees.save');
 
 	# Positions
 	Route::get('/positions/', 'PositionController@index')->name('positions');

@@ -247,8 +247,8 @@
                         </a>
                     </li>
 
-                   
-<!-- 
+
+<!--
                     <li class="@if(Request::is('timesheets')) active @endif">
                         <a href="{{ url('/timesheets/') }}">
                             <i class="iconsmind-Stopwatch"></i>
@@ -262,7 +262,7 @@
                             <span>Companies</span>
                         </a>
                     </li>
-                    
+
                     <li class="@if(Request::is('employees')) active @endif @if(Request::is('employees/*')) active @endif @if(strpos(Request::fullUrl(), 'employee') !== false) active @endif">
                         <a href="{{ url('/employees/') }}">
                             <i class="iconsmind-Worker"></i>
@@ -281,6 +281,13 @@
                         <a href="{{ url('/supervisors/') }}">
                             <i class="iconsmind-Business-Man"></i>
                             <span>Supervisors</span>
+                        </a>
+                    </li>
+
+                    <li class="@if(Request::is('staff')) active @endif @if(Request::is('staff/*')) active @endif">
+                        <a href="{{ url('/staff/') }}">
+                            <i class="iconsmind-Business-Mens"></i>
+                            <span>Staff</span>
                         </a>
                     </li>
 

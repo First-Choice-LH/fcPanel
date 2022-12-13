@@ -60,6 +60,18 @@ class ClientController extends Controller
     public function create()
     {
         $data['documentTypes']  = ClientDocType::all();
+
+        $positions              = Position::where('status', 1)->get();
+        $data['positions']      = [];
+        foreach($positions as $position) {
+            $data['positions'][] = [
+                'id'            => $position->id,
+                'label'         => $position->title
+            ];
+        }
+
+        $data['positions']      = json_encode($data['positions']);
+        $data['positionRates']  = json_encode([]);
         return view('clients.create', $data);
     }
 
