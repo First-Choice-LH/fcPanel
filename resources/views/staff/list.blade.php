@@ -26,7 +26,7 @@
 <div class="page-header">
 	<div class="row">
 		<div class="col-lg-12">
-			<h1>Employee List</h1>
+			<h1>Staff List</h1>
 			<hr/>
 		</div>
 	</div>
