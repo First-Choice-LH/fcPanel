@@ -487,6 +487,7 @@
     @endforeach
 
     var calendar;
+    var isMobile    = detectMob();
     $(function() {
         var eventsSource = {
             textColor: 'white'
@@ -499,7 +500,7 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek'
             },
-            initialView: 'dayGridMonth',
+            initialView: isMobile ? 'timeGridWeek' : 'dayGridMonth',
             firstDay: 1,
             allowClear: true,
             eventSources: loadCalendarEvents,
@@ -525,7 +526,7 @@
             const startDate     = moment(info.start).format('YYYY-MM-DD');
             const endDate       = moment(info.end).format('YYYY-MM-DD');
 
-            $.get(`${BASE_URL}/api/jobs`, { startDate, endDate, calendarView: true }, function(response) {
+            $.get(`${BASE_URL}/api/jobs`, { startDate, endDate, isMobile, calendarView: true }, function(response) {
                 let events = [];
                 for(let job of response) {
                     let title = job.status == 1 ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
@@ -666,6 +667,22 @@
         });
 
     });
+
+    function detectMob() {
+        const toMatch = [
+            /Android/i,
+            /webOS/i,
+            /iPhone/i,
+            /iPad/i,
+            /iPod/i,
+            /BlackBerry/i,
+            /Windows Phone/i
+        ];
+
+        return toMatch.some((toMatchItem) => {
+            return navigator.userAgent.match(toMatchItem);
+        });
+    }
 
     function showAddJobModal(dateString) {
         $('#requestJobDateContainer').text(moment(dateString).format('DD/MM/YYYY'));
