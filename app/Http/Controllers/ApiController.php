@@ -122,7 +122,7 @@ class ApiController extends Controller
 
 
         $data = [];
-        if( $request->get('calendarView') == true && $request->get('isMobile') == true) {
+        if( $request->get('calendarView') == true && $request->get('isMobile') == false) {
             $jobs->select(DB::raw('COUNT(id) AS events'), DB::raw('CAST(start_time AS DATE) AS start_time'), DB::raw('CAST(end_time AS DATE) AS end_time'), 'status');
             $data   = $jobs->groupBy(DB::raw('CAST(start_time AS DATE)'), DB::raw('CAST(end_time AS DATE)'), 'status')->get();
         }else {

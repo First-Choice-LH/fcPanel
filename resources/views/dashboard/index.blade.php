@@ -531,8 +531,8 @@
                 for(let job of response) {
                     let title = '';
                     if(isMobile) {
-                        title = `${job.client.company_name} - ${job.jobsite.title} - `;
-                        title += job.status == 1 ?  `${job.employee.first_name} ${job.employee.last_name}(${job.position.title})` : `${job.position.title}`
+                        title = `${job.client?.company_name} - ${job.jobsite?.title} - `;
+                        title += job.status == 1 ?  `${job.employee?.first_name} ${job.employee?.last_name}(${job.position?.title})` : `${job.position?.title}`
                     } else {
                         title = job.status == 1 ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
                     }
