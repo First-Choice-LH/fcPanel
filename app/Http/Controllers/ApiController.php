@@ -101,6 +101,9 @@ class ApiController extends Controller
     public function getJobs(Request $request) {
 
         $jobs           = Job::where([]);
+        $isCalendarView = $request->get('calendarView') === 'true';
+        $isMobileView   = $request->get('isMobile') === 'true';
+        $data           = [];
 
         if($request->get('dated')) {
             $dated      = urldecode($request->get('dated'));
@@ -120,9 +123,7 @@ class ApiController extends Controller
             $jobs->where('status', $request->get('status'));
         }
 
-
-        $data = [];
-        if( $request->get('calendarView') == true && $request->get('isMobile') == false) {
+        if( $isCalendarView && !$isMobileView ) {
             $jobs->select(DB::raw('COUNT(id) AS events'), DB::raw('CAST(start_time AS DATE) AS start_time'), DB::raw('CAST(end_time AS DATE) AS end_time'), 'status');
             $data   = $jobs->groupBy(DB::raw('CAST(start_time AS DATE)'), DB::raw('CAST(end_time AS DATE)'), 'status')->get();
         }else {
