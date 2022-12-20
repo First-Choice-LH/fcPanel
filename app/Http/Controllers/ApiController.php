@@ -122,11 +122,15 @@ class ApiController extends Controller
 
 
         $data = [];
-        if( $request->get('calendarView') == true ) {
-            $jobs->select(DB::raw('COUNT(id) AS events'), DB::raw('CAST(start_time AS DATE) AS start'), DB::raw('CAST(end_time AS DATE) AS end'), 'status');
+        if( $request->get('calendarView') == true && $request->get('isMobile') == true) {
+            $jobs->select(DB::raw('COUNT(id) AS events'), DB::raw('CAST(start_time AS DATE) AS start_time'), DB::raw('CAST(end_time AS DATE) AS end_time'), 'status');
             $data   = $jobs->groupBy(DB::raw('CAST(start_time AS DATE)'), DB::raw('CAST(end_time AS DATE)'), 'status')->get();
-        } else {
+        }else {
             $data   = $jobs->with(['client', 'jobsite', 'position', 'supervisor', 'employee', 'allocator', 'updater'])->get();
+            foreach($data as $key => $value) {
+                $data[$key]['start_time'] = date('Y-m-d', strtotime($value['start_time']));
+                $data[$key]['end_time'] = date('Y-m-d', strtotime($value['end_time']));
+            }
         }
 
         return response()->json( $data );

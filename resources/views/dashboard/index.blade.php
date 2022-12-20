@@ -498,9 +498,9 @@
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek'
+                right: 'dayGridMonth,listWeek'
             },
-            initialView: isMobile ? 'timeGridWeek' : 'dayGridMonth',
+            initialView: isMobile ? 'listWeek' : 'dayGridMonth',
             firstDay: 1,
             allowClear: true,
             eventSources: loadCalendarEvents,
@@ -529,10 +529,16 @@
             $.get(`${BASE_URL}/api/jobs`, { startDate, endDate, isMobile, calendarView: true }, function(response) {
                 let events = [];
                 for(let job of response) {
-                    let title = job.status == 1 ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
+                    let title = '';
+                    if(isMobile) {
+                        title = `${job.client.company_name} - ${job.jobsite.title} - `;
+                        title += job.status == 1 ?  `${job.employee.first_name} ${job.employee.last_name}(${job.position.title})` : `${job.position.title}`
+                    } else {
+                        title = job.status == 1 ? `Allocated Jobs(${job.events})` : `Unallocated Jobs(${job.events})`
+                    }
                     events.push({
                         title           : title,
-                        start           : job.start,
+                        start           : job.start_time,
                         extendedProps   : {
                             status: job.status
                         },
