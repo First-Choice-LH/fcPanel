@@ -37,6 +37,19 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow {
         top: 12px;
     }
+    .fc-list-item-time, .fc-list-event-time {
+        display:none;
+    }
+    @media screen and (max-width: 767px) {
+        /* Mobile */
+        #app-container.sub-hidden main, #app-container.menu-sub-hidden main, #app-container.menu-hidden main {
+            margin-left: -10% !important;
+            margin-right: -10% !important;
+        }
+        .fc-button-group {
+            margin-bottom: 10px;
+        }
+    }
 </style>
 
 <!-- <div class="page-header">
@@ -500,8 +513,16 @@
                 center: 'title',
                 right: 'dayGridMonth,listWeek'
             },
+            views: {
+                listWeek: { // name of view
+                    titleFormat: { year: '2-digit', month: '2-digit', day: '2-digit' }
+                    // other view-specific options here
+                }
+            },
+            height: '100vh',
             initialView: isMobile ? 'listWeek' : 'dayGridMonth',
             firstDay: 1,
+            dayHeaderFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
             allowClear: true,
             eventSources: loadCalendarEvents,
             eventClick: function(info) {
