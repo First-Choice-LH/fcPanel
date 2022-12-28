@@ -40,6 +40,10 @@
     .fc-list-item-time, .fc-list-event-time {
         display:none;
     }
+    .fc .fc-list-event:hover td{
+        color: #111;
+        background: #ccc;
+    }
     @media screen and (max-width: 767px) {
         /* Mobile */
         #app-container.sub-hidden main, #app-container.menu-sub-hidden main, #app-container.menu-hidden main {
