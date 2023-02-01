@@ -133,7 +133,7 @@
                     </div>
                 </div>
 
-                @if(count($notes))
+                @if(!empty($notes))
                 <div class="row" >
                     <div class="col-lg-8">
                         <table class="table">
@@ -719,7 +719,12 @@ function removePositionRow() {
 }
 
 $(document).ready(function() {
-    var employeePositions = JSON.parse('{!! ($employeePositions) !!}');
+    var employeePositions;
+    @if(!empty($employeePositions))
+        employeePositions = JSON.parse('{!! ($employeePositions) !!}');
+    @else
+        employeePositions = [];
+    @endif
 
     for(let rate of employeePositions) {
         addNewPositionRow(rate);

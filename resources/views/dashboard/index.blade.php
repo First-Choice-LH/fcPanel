@@ -515,7 +515,7 @@
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,listWeek'
+                right: 'dayGridMonth,dayGridWeek'
             },
             views: {
                 listWeek: { // name of view
@@ -523,8 +523,9 @@
                     // other view-specific options here
                 }
             },
-            height: '100vh',
-            initialView: isMobile ? 'listWeek' : 'dayGridMonth',
+            height: 'auto',
+            // contentHeight: 'auto',
+            initialView: isMobile ? 'dayGridWeek' : 'dayGridMonth',
             firstDay: 1,
             dayHeaderFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
             allowClear: true,
