@@ -117,10 +117,10 @@ Route::group(['middleware' => ['role:admin']], function () {
 	Route::get('/remove/{id}', 'EmployeeController@remove_image');
 
     #Staff
-    Route::get('/staff', 'StaffController@index')->name('employees');
-	Route::get('/staff/create/', 'StaffController@create')->name('employees.create');
-	Route::get('/staff/update/{id}', 'StaffController@update')->name('employees.update');
-	Route::post('/staff/save/', 'StaffController@save')->name('employees.save');
+    Route::get('/staff', 'StaffController@index')->name('staff');
+	Route::get('/staff/create/', 'StaffController@create')->name('staff.create');
+	Route::get('/staff/update/{id}', 'StaffController@update')->name('staff.update');
+	Route::post('/staff/save/', 'StaffController@save')->name('staff.save');
 
 	# Positions
 	Route::get('/positions/', 'PositionController@index')->name('positions');
